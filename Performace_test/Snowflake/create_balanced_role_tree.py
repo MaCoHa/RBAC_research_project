@@ -26,14 +26,14 @@ def create_connection(database_name, schema_name):
 
     return snowflake_config
 
-def get_query_stats(cur, query_ids):
-    query_ids_str = ', '.join([f"'{qid}'" for qid in query_ids])
+def get_query_stats(cur, query_id):
+    query_id_str = f"'{query_id}'"
 
     stats_query = f"""
     SELECT query_id, schema_name, warehouse_size, total_elapsed_time/1000 AS time_elapsed_in_seconds, total_elapsed_time AS total_elapsed_time_milli
     FROM
         table(information_schema.query_history())
-    WHERE user_name = 'CAT' and execution_status = 'SUCCESS' and query_id IN ({query_ids_str})
+    WHERE user_name = 'CAT' and execution_status = 'SUCCESS' and query_id = {query_id_str}
     ORDER BY start_time desc;
     """
     
@@ -44,7 +44,7 @@ def get_query_stats(cur, query_ids):
 def remove_roles(cur,num_of_roles):
     # drops roles from 0 to num_of_roles
     for query in cleanup.generate_drop_role_queries(num_of_roles):
-        cur.execute(query)
+        cur.execute_async(query)
     return 
 
 
@@ -52,9 +52,9 @@ def use_warehouse(cur, warehouse):
     cur.execute(f"use warehouse {warehouse}")
 
 def main(repetitions,roles_to_create,measurement_points):
-    query_ids = []
+    stats_mapping = {}
     repetition_to_queryid = {}
-    queue = deque()
+    
     connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
     conn = snowflake.connector.connect(**connection_config)
     cur = conn.cursor()
@@ -76,24 +76,25 @@ def main(repetitions,roles_to_create,measurement_points):
             current = 0
             front = 1
             while True :
-                queries = []
-                save = False
-                print(f"current {current}")    
-                print(f"front {front}")                
+                first_query = True
+
                             
     
                 for query in sql.generate_role_queries(f"Role{current}",f"Role{(front)}"):
                     cur.execute(query)
                                         
-                    if ((front) in measurement_points):
+                    if (first_query and front in measurement_points):
                         qid = cur.sfqid
-                        # take the time of two querys                 
-                        save = True
-                        query_ids.append(qid)
-                        queries.append(qid)
+                        # take the time of creating role x                
+                        first_query = False
                         
-                if save:
-                    repetition_to_queryid[(i,current)] = queries
+                        # i = repetition
+                        # role_num = measurement point.
+                        repetition_to_queryid[(i,front)] = qid
+                        stats = get_query_stats(cur, qid)
+                        for qid, schema, warehouse_size, elapsed_seconds, elapsed_milli in stats:
+                            stats_mapping[qid] = (schema, warehouse_size, elapsed_seconds, elapsed_milli)
+                        
                 
                 if (front % 4) == 0:
                     current += 1
@@ -103,22 +104,18 @@ def main(repetitions,roles_to_create,measurement_points):
                 else:
                     front += 1
                 
-            # run clean up roles            
+            # run clean up roles  
             remove_roles(cur,roles_to_create)
          
           
         
-        stats = get_query_stats(cur, query_ids)
-        stats_mapping = {}
-        for qid, schema, warehouse_size, elapsed_seconds, elapsed_milli in stats:
-            stats_mapping[qid] = (schema, warehouse_size, elapsed_seconds, elapsed_milli)
-
+    
         with open('./benchmark_balanced_role_tree_stats.csv', 'w') as file:
             writer = csv.writer(file, delimiter=';')
 
 
-            for (i, role_num), qids in repetition_to_queryid.items():
-                aggregated_elapsed_milli = sum([stats_mapping[qid][3] for qid in qids])
+            for (i, role_num), qid in repetition_to_queryid.items():
+                aggregated_elapsed_milli = sum([stats_mapping[qid][3]])
                 aggregated_elapsed_seconds = aggregated_elapsed_milli / 1000
                 writer.writerow((i, role_num, aggregated_elapsed_seconds, aggregated_elapsed_milli))
                 
@@ -126,5 +123,6 @@ def main(repetitions,roles_to_create,measurement_points):
 
     finally:
         conn.close()
+        cur.close()
 
     print("Benchmark results is written to 'benchmark_balanced_role_tree_stats.csv'")
