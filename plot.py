@@ -48,10 +48,10 @@ def plot_graph(x_value:list,
     plt.ylabel(y_name)
     plt.title(title)
     plt.grid(True)
+    plt.legend()
     plt.savefig(f"plots/{filename}.png", format='png')
     
     # Show legend
-    plt.legend()
     # Display plot
     plt.show()
     plt.close()  # Close the figure after saving
@@ -102,27 +102,27 @@ def plot_snowflake_trees(measurement_points:list,repetitions:int):
     
     for measurment in measurement_points:
         wide_sum = 0
-        deep_sum = 2000000
-        balanced_sum = 4000000
+        deep_sum = 0
+        balanced_sum = 0
         for i in range(repetitions):
             wide_sum += float(data["Wide"][f'{measurment}'][f'{i}'][1])
             deep_sum += float(data["Deep"][f'{measurment}'][f'{i}'][1])
             balanced_sum += float(data["Balanced"][f'{measurment}'][f'{i}'][1])
-        Wide_lst.append((wide_sum/repetitions)/1000)
-        Deep_lst.append((deep_sum/repetitions)/1000)
-        Balanced_lst.append((balanced_sum/repetitions)/1000)
+        Wide_lst.append((wide_sum/repetitions))
+        Deep_lst.append((deep_sum/repetitions))
+        Balanced_lst.append((balanced_sum/repetitions))
         
     plot_graph(measurement_points,
                [Wide_lst,Deep_lst,Balanced_lst],
                ["Wide","Deep","Balanced"],
                "Role creation",
-               "Time in s",
+               "Time in ms",
                "Snowflake Role trees",
                "Snowflake_Role_Tree_graphs")
     
 
 if __name__ == "__main__":
-    plot_snowflake_trees([500,1_000,2_000,4_000,8_000,16_000,32_000,64_000,100_000],2)
+    plot_snowflake_trees([500,1_000,2_000,4_000,8_000,10_000],3)
         
     
     
