@@ -39,7 +39,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
     elif db == "PostgreSql":
         print('Connecting to the PostgreSQL database...') 
         
-        params = util.postgres_config() 
+        params = util.postgres_config(section='postgresql_Wide') 
         # connect to the PostgreSQL server 
         conn = psycopg2.connect(**params) 
         cur = conn.cursor() 
@@ -50,6 +50,10 @@ def main(repetitions,time_limit_minutes,file_name,db):
         
         
 
+    util.remove_roles(db,cur,conn,61255)
+    cur.close
+    conn.close
+    return
 
     time_limit_seconds = time_limit_minutes * 60
 
@@ -76,7 +80,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     print("Time limit reached. Exiting loop.")
                     break
                 
-                for query in sql.generate_role_queries(f"Role{role_num}"):
+                for query in sql.generate_role_queries(db,f"Role{role_num}"):
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
@@ -88,12 +92,15 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             role_num,
                             (start_query_time),
                             (end_query_time)])
-                                        
+                    
+                if db == "PostgreSql":
+                    conn.commit()
+                
                 
                 role_num += 1
                 
             # run clean up roles            
-            util.remove_roles(cur,role_num)
+            util.remove_roles(db,cur,conn,role_num)
          
     finally:
         conn.close()

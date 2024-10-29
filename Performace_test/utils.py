@@ -19,10 +19,16 @@ def append_to_log(file_name, data):
 
         
         
-def remove_roles(cur,num_of_roles):
+def remove_roles(db,cur,conn,num_of_roles):
     # drops roles from 0 to num_of_roles
     for query in cleanup.generate_drop_role_queries(num_of_roles):
-        cur.execute_async(query)
+        if db == "Snowflake":
+            cur.execute_async(query)
+        elif db == "PostgreSql":
+            cur.execute(query)
+            conn.commit()
+            
+            
     return 
 
 def get_query_stats(cur, query_id):
@@ -40,7 +46,7 @@ def get_query_stats(cur, query_id):
     return cur.fetchall()
 
 
-#!/usr/bin/python 
+
 from configparser import ConfigParser 
   
   
@@ -49,7 +55,7 @@ def postgres_config(filename='database.ini', section='postgresql'):
     parser = ConfigParser() 
     # read config file 
     parser.read(filename) 
-  
+    
     # get section, default to postgresql 
     db = {} 
     if parser.has_section(section): 
