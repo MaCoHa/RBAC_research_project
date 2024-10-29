@@ -1,13 +1,11 @@
 
 
-import datetime
 import os
-from collections import defaultdict
 import time
 import snowflake.connector
 import sql.wide_role_sql as sql
 import utils as util
-
+import psycopg2 
 
 def create_connection(database_name, schema_name):
     password = os.getenv('SNOWSQL_PWD')
@@ -30,9 +28,27 @@ def use_warehouse(cur, warehouse):
     cur.execute(f"use warehouse {warehouse}")
 
 def main(repetitions,time_limit_minutes,file_name,db):
-    connection_config = create_connection("WIDE_ROLE_DB", "PUBLIC")
-    conn = snowflake.connector.connect(**connection_config)
-    cur = conn.cursor()
+    
+    if db == "Snowflake":
+        print('Connecting to the Snowflake database...') 
+        
+        connection_config = create_connection("WIDE_ROLE_DB", "PUBLIC")
+        conn = snowflake.connector.connect(**connection_config)
+        cur = conn.cursor()
+        use_warehouse(cur, "ANIMAL_TASK_WH")
+    elif db == "PostgreSql":
+        print('Connecting to the PostgreSQL database...') 
+        
+        params = util.postgres_config() 
+        # connect to the PostgreSQL server 
+        conn = psycopg2.connect(**params) 
+        cur = conn.cursor() 
+    else:
+        print('Connecting to the MariaDB database...') 
+        print('********************* TODO *********************') 
+        return
+        
+        
 
 
     time_limit_seconds = time_limit_minutes * 60
@@ -40,7 +56,6 @@ def main(repetitions,time_limit_minutes,file_name,db):
     util.create_log_initial(file_name)
     
     try:
-        use_warehouse(cur, "ANIMAL_TASK_WH")
         print("Running wide role tree")
         
         # Run create roles
