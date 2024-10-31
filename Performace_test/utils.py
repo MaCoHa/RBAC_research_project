@@ -19,14 +19,13 @@ def append_to_log(file_name, data):
 
         
         
-def remove_roles(db,cur,conn,num_of_roles):
+def remove_roles(db,cur,num_of_roles):
     # drops roles from 0 to num_of_roles
     for query in cleanup.generate_drop_role_queries(num_of_roles):
         if db == "Snowflake":
             cur.execute_async(query)
         elif db == "PostgreSql":
             cur.execute(query)
-            conn.commit()
             
             
     return 

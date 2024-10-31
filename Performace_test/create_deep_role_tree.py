@@ -1,8 +1,8 @@
 
 
-import datetime
 import os
 import time
+import psycopg2
 import snowflake.connector
 import sql.deep_role_sql as sql
 import utils as util
@@ -48,9 +48,28 @@ def use_warehouse(cur, warehouse):
 
 def main(repetitions,time_limit_minutes,file_name,db):
 
-    connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
-    conn = snowflake.connector.connect(**connection_config)
-    cur = conn.cursor()
+    if db == "Snowflake":
+        print('Connecting to the Snowflake database...') 
+        
+        connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
+        conn = snowflake.connector.connect(**connection_config)
+        cur = conn.cursor()
+        use_warehouse(cur, "ANIMAL_TASK_WH")
+    elif db == "PostgreSql":
+        print('Connecting to the PostgreSQL database...') 
+        
+        params = util.postgres_config(section='postgresql_Wide') 
+        # connect to the PostgreSQL server 
+        conn = psycopg2.connect(**params) 
+        # autocommit commits querys to the database imediatly instead of
+        #storing the transaction localy
+        conn.autocommit = True
+        cur = conn.cursor() 
+    else:
+        print('Connecting to the MariaDB database...') 
+        print('********************* TODO *********************') 
+        return
+
     
     use_warehouse(cur, "ANIMAL_TASK_WH")
 
@@ -63,7 +82,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
 
     try:
         
-        print("Running deep role tree")
+        print(f"Running deep role tree on {db}")
         
         # Run create roles
         print("Running Create Roles")
@@ -96,10 +115,12 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             role_num,
                             (start_query_time),
                             (end_query_time)])  
+                    
+                    
                 role_num += 1
                 
             # run clean up roles            
-            util.remove_roles(cur,role_num)
+            util.remove_roles(db,cur,role_num)
 
     finally:
         conn.close()

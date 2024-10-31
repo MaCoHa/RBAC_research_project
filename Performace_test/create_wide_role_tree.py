@@ -42,6 +42,9 @@ def main(repetitions,time_limit_minutes,file_name,db):
         params = util.postgres_config(section='postgresql_Wide') 
         # connect to the PostgreSQL server 
         conn = psycopg2.connect(**params) 
+        # autocommit commits querys to the database imediatly instead of
+        #storing the transaction localy
+        conn.autocommit = True
         cur = conn.cursor() 
     else:
         print('Connecting to the MariaDB database...') 
@@ -50,17 +53,12 @@ def main(repetitions,time_limit_minutes,file_name,db):
         
         
 
-    util.remove_roles(db,cur,conn,61255)
-    cur.close
-    conn.close
-    return
-
     time_limit_seconds = time_limit_minutes * 60
 
     util.create_log_initial(file_name)
     
     try:
-        print("Running wide role tree")
+        print(f"Running wide role tree on {db}")
         
         # Run create roles
         print("Running Create Roles")
@@ -93,14 +91,12 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             (start_query_time),
                             (end_query_time)])
                     
-                if db == "PostgreSql":
-                    conn.commit()
                 
                 
                 role_num += 1
                 
             # run clean up roles            
-            util.remove_roles(db,cur,conn,role_num)
+            util.remove_roles(db,cur,role_num)
          
     finally:
         conn.close()

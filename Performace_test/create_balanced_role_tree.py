@@ -1,14 +1,11 @@
 
 
-import datetime
 import os
-from collections import defaultdict
-import csv
-import queue
 import time
 import snowflake.connector
 import sql.balanced_role_sql as sql
 import utils as util
+import psycopg2 
 
 
 
@@ -34,16 +31,36 @@ def use_warehouse(cur, warehouse):
 
 def main(repetitions,time_limit_minutes,file_name,db):
     
-    connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
-    conn = snowflake.connector.connect(**connection_config)
-    cur = conn.cursor()
+    
+    if db == "Snowflake":
+        print('Connecting to the Snowflake database...') 
+        
+        connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
+        conn = snowflake.connector.connect(**connection_config)
+        cur = conn.cursor()
+        use_warehouse(cur, "ANIMAL_TASK_WH")
+    elif db == "PostgreSql":
+        print('Connecting to the PostgreSQL database...') 
+        
+        params = util.postgres_config(section='postgresql_Wide') 
+        # connect to the PostgreSQL server 
+        conn = psycopg2.connect(**params) 
+        # autocommit commits querys to the database imediatly instead of
+        #storing the transaction localy
+        conn.autocommit = True
+        cur = conn.cursor() 
+    else:
+        print('Connecting to the MariaDB database...') 
+        print('********************* TODO *********************') 
+        return
 
     time_limit_seconds = time_limit_minutes * 60
 
     util.create_log_initial(file_name)
+    
     try:
         use_warehouse(cur, "ANIMAL_TASK_WH")
-        print("Running balanced role tree")
+        print(f"Running balanced role tree on {db}")
         
         # Run create roles
         print("Running Create Roles")
@@ -90,7 +107,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
 
                 
             # run clean up roles  
-            util.remove_roles(cur,front)
+            util.remove_roles(db,cur,front)
   
                 
 
