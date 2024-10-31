@@ -83,7 +83,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
-                            [query,
+                            [query.replace(";",""),
                             db,
                             "Wide_tree",
                             i,

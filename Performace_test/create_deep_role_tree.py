@@ -71,7 +71,6 @@ def main(repetitions,time_limit_minutes,file_name,db):
         return
 
     
-    use_warehouse(cur, "ANIMAL_TASK_WH")
 
 
 
@@ -102,7 +101,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     print("Time limit reached. Exiting loop.")
                     break
                 
-                for query in sql.generate_role_queries(f"Role{role_num}",f"Role{role_num-1}"):
+                for query in sql.generate_role_queries(db,f"Role{role_num}",f"Role{role_num-1}"):
 
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     cur.execute(query)
@@ -120,8 +119,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                 role_num += 1
                 
             # run clean up roles            
-            util.remove_roles(db,cur,role_num)
-
+            util.remove_roles(db,cur,role_num)        
     finally:
         conn.close()
         cur.close()

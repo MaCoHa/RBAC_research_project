@@ -39,6 +39,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
         use_warehouse(cur, "ANIMAL_TASK_WH")
+        
     elif db == "PostgreSql":
         print('Connecting to the PostgreSQL database...') 
         
@@ -59,7 +60,6 @@ def main(repetitions,time_limit_minutes,file_name,db):
     util.create_log_initial(file_name)
     
     try:
-        use_warehouse(cur, "ANIMAL_TASK_WH")
         print(f"Running balanced role tree on {db}")
         
         # Run create roles
@@ -74,10 +74,10 @@ def main(repetitions,time_limit_minutes,file_name,db):
 
             start_time = time.time()
             current = 0
-            front = 0
+            front = 1
             while True :
                 
-                front += 1
+                
                 elapsed_time = time.time() - start_time
                 if elapsed_time > time_limit_seconds:
                     print("Time limit reached. Exiting loop.")
@@ -104,7 +104,8 @@ def main(repetitions,time_limit_minutes,file_name,db):
                 
                 if (front % 4) == 0:
                     current += 1
-
+                front += 1
+               
                 
             # run clean up roles  
             util.remove_roles(db,cur,front)
