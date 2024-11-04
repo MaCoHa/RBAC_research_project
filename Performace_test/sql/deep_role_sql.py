@@ -14,5 +14,8 @@ def generate_role_queries(db,role1,role2):
         ]
     else:
         # MariaDB
-        return []
+         return [
+            f"CREATE ROLE {role1};",
+            f"GRANT {role1} TO {role2};"
+        ]
 

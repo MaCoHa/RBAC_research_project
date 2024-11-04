@@ -1,7 +1,9 @@
 
 
 import os
+import sys
 import time
+import mariadb
 import snowflake.connector
 import sql.balanced_role_sql as sql
 import utils as util
@@ -51,9 +53,15 @@ def main(repetitions,time_limit_minutes,file_name,db):
         conn.autocommit = True
         cur = conn.cursor() 
     else:
+         # connect to the MariaDB server   
         print('Connecting to the MariaDB database...') 
-        print('********************* TODO *********************') 
-        return
+        try:
+            # connect to the MariaDB server 
+            conn = util.mariadb_config("Wide_db") 
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cur = conn.cursor() 
 
     time_limit_seconds = time_limit_minutes * 60
 
@@ -84,7 +92,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     break
                             
     
-                for query in sql.generate_role_queries(f"Role{current}",f"Role{(front)}"):
+                for query in sql.generate_role_queries(db,f"Role{current}",f"Role{(front)}"):
                     
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     cur.execute(query)

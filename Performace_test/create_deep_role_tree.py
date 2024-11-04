@@ -1,7 +1,9 @@
 
 
 import os
+import sys
 import time
+import mariadb
 import psycopg2
 import snowflake.connector
 import sql.deep_role_sql as sql
@@ -66,9 +68,15 @@ def main(repetitions,time_limit_minutes,file_name,db):
         conn.autocommit = True
         cur = conn.cursor() 
     else:
+         # connect to the MariaDB server   
         print('Connecting to the MariaDB database...') 
-        print('********************* TODO *********************') 
-        return
+        try:
+            # connect to the MariaDB server 
+            conn = util.mariadb_config("Wide_db") 
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cur = conn.cursor() 
 
     
 

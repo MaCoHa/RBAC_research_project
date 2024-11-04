@@ -1,4 +1,6 @@
 import csv
+
+import mariadb
 import sql.cleanup_sql as cleanup
 import os
 import snowflake.connector
@@ -26,6 +28,9 @@ def remove_roles(db,cur,num_of_roles):
             cur.execute_async(query)
         elif db == "PostgreSql":
             cur.execute(query)
+        elif db == "MariaDB":
+            cur.execute(query)
+
             
             
     return 
@@ -65,3 +70,34 @@ def postgres_config(filename='database.ini', section='postgresql'):
         raise Exception('Section {0} not found in the {1} file'.format(section, filename)) 
   
     return db
+
+def mariadb_config(db_type):
+    if db_type == "Wide_db":
+       return mariadb.connect(
+            user="root",
+            password=os.getenv('Mariadb_PWD'),
+            host="localhost",
+            port=3306,
+            database="Wide_db"
+        )
+        
+    elif db_type == "Deep_db":
+        return mariadb.connect(
+            user="ConnectionUser",
+            password=os.getenv('Mariadb_PWD'),
+            host="localhost",
+            port=3306,
+            database="Deep_db"
+        )
+        
+    elif db_type == "Balanced_db":
+        return mariadb.connect(
+            user="ConnectionUser",
+            password=os.getenv('Mariadb_PWD'),
+            host="localhost",
+            port=3306,
+            database="Balanced_db"
+        )
+    
+
+

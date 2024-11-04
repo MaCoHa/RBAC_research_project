@@ -6,6 +6,8 @@ import snowflake.connector
 import sql.wide_role_sql as sql
 import utils as util
 import psycopg2 
+import mariadb
+import sys
 
 def create_connection(database_name, schema_name):
     password = os.getenv('SNOWSQL_PWD')
@@ -46,13 +48,17 @@ def main(repetitions,time_limit_minutes,file_name,db):
         #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
-    else:
+    elif db == "MariaDB":
+        # connect to the MariaDB server   
         print('Connecting to the MariaDB database...') 
-        print('********************* TODO *********************') 
-        return
-        
-        
-
+        try:
+            # connect to the MariaDB server 
+            conn = util.mariadb_config("Wide_db") 
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cur = conn.cursor() 
+    
     time_limit_seconds = time_limit_minutes * 60
 
     util.create_log_initial(file_name)
