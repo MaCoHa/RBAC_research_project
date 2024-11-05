@@ -1,5 +1,6 @@
 
 
+import datetime
 import os
 import sys
 import time
@@ -62,6 +63,9 @@ def main(repetitions,time_limit_minutes,file_name,db):
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor() 
+        
+    test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        
 
     time_limit_seconds = time_limit_minutes * 60
 
@@ -98,7 +102,8 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
-                            [query,
+                            [test_id,
+                            query,
                             db,
                             "Wide_tree",
                             i,
