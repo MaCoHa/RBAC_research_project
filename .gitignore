@@ -530,4 +530,4 @@ MigrationBackup/
 
 *.ini
 
-*.pyc
+*.csv
