@@ -11,3 +11,18 @@ SELECT * FROM information_schema.applicable_roles where GRANTEE like "root%";
 
 
 SHOW GRANTS FOR research1;
+
+
+
+drop table Foo;
+
+CREATE TABLE FOO (
+    website_name VARCHAR(25) NOT NULL,
+    server_name VARCHAR(20),
+    creation_date DATE
+);
+
+INSERT INTO FOO (website_name, server_name, creation_date)
+VALUES ('example.com', 'server01', '2024-11-06');
+
+SELECT * FROM FOO;
