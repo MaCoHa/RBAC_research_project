@@ -2,38 +2,59 @@ import csv
 
 import mariadb
 import sql.cleanup_sql as cleanup
+import sql.grant_sql as grant
 import os
 import snowflake.connector
 
 
+def create_log_select(file_name):
+    os.makedirs('./benchmark', exist_ok=True)
+    with open(f'./benchmark/{file_name}.csv', 'w') as file:
+            writer = csv.writer(file, delimiter=':')
+            writer.writerow(("test_id","query", "database", "tree_type","start_time","endtime"))
+    
+    
+
 def create_log_initial(file_name):
     os.makedirs('./benchmark', exist_ok=True)
     with open(f'./benchmark/{file_name}.csv', 'w') as file:
-            writer = csv.writer(file, delimiter=';')
+            writer = csv.writer(file, delimiter=':')
             writer.writerow(("test_id","query", "database", "tree_type", "repetition","role_number","start_time","endtime"))
     
     
 def append_to_log(file_name, data):
     with open(f'./benchmark/{file_name}.csv', 'a', newline='') as file:
-        writer = csv.writer(file, delimiter=';')
+        writer = csv.writer(file, delimiter=':')
         writer.writerow(data)
         
 
-        
-        
-def remove_roles(db,cur,num_of_roles):
-    # drops roles from 0 to num_of_roles
-    for query in cleanup.generate_drop_role_queries(num_of_roles):
+def grant_table(db,cur,role_num,table_name):
+      for query in grant.generate_grant_table_querie(db,table_name,role_num):
         if db == "Snowflake":
-            cur.execute_async(query)
+            cur.execute(query)
         elif db == "PostgreSql":
             cur.execute(query)
         elif db == "MariaDB":
+            cur.execute(query)  
+        
+def remove_roles(db,cur,num_of_roles):
+    # drops roles from 1 to num_of_roles
+    for query in cleanup.generate_drop_role_queries(num_of_roles):
+        
+        if db == "Snowflake":
+            #print(f"{db} : {query}")
+            cur.execute(query)
+        elif db == "PostgreSql":
+            #print(f"{db} : {query}")
+            cur.execute(query)
+        elif db == "MariaDB":
+            #print(f"{db} : {query}")
             cur.execute(query)
 
-            
-            
-    return 
+        
+ 
+
+
 
 def get_query_stats(cur, query_id):
     query_id_str = f"'{query_id}'"
@@ -101,3 +122,23 @@ def mariadb_config(db_type):
     
 
 
+
+def create_connection(database_name, schema_name):
+    password = os.getenv('SNOWSQL_PWD')
+
+    snowflake_config = {
+        "user": "CAT",
+        "password": password,
+        "account": "sfedu02-gyb58550",
+        "database": database_name,
+        "schema": schema_name,
+        "session_parameters": {
+            "USE_CACHED_RESULT": False
+        }
+    }
+
+    return snowflake_config
+
+
+def use_warehouse(cur, warehouse):
+    cur.execute(f"use warehouse {warehouse}")

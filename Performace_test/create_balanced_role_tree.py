@@ -12,25 +12,6 @@ import psycopg2
 
 
 
-def create_connection(database_name, schema_name):
-    password = os.getenv('SNOWSQL_PWD')
-
-    snowflake_config = {
-        "user": "CAT",
-        "password": password,
-        "account": "sfedu02-gyb58550",
-        "database": database_name,
-        "schema": schema_name,
-        "session_parameters": {
-            "USE_CACHED_RESULT": False
-        }
-    }
-
-    return snowflake_config
-
-
-def use_warehouse(cur, warehouse):
-    cur.execute(f"use warehouse {warehouse}")
 
 def main(repetitions,time_limit_minutes,file_name,db):
     
@@ -38,10 +19,10 @@ def main(repetitions,time_limit_minutes,file_name,db):
     if db == "Snowflake":
         print('Connecting to the Snowflake database...') 
         
-        connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
+        connection_config = util.create_connection("DEEP_ROLE_DB", "PUBLIC")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
-        use_warehouse(cur, "ANIMAL_TASK_WH")
+        util.use_warehouse(cur, "ANIMAL_TASK_WH")
         
     elif db == "PostgreSql":
         print('Connecting to the PostgreSQL database...') 
@@ -63,7 +44,8 @@ def main(repetitions,time_limit_minutes,file_name,db):
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor() 
-        
+      
+    
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         
 
@@ -97,7 +79,6 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             
     
                 for query in sql.generate_role_queries(db,f"Role{current}",f"Role{(front)}"):
-                    
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
@@ -105,7 +86,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             [test_id,
                             query,
                             db,
-                            "Wide_tree",
+                            "balanced_tree",
                             i,
                             front,
                             (start_query_time),

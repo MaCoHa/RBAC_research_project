@@ -12,22 +12,6 @@ import utils as util
 
 
 
-def create_connection(database_name, schema_name):
-    password = os.getenv('SNOWSQL_PWD')
-
-    snowflake_config = {
-        "user": "CAT",
-        "password": password,
-        "account": "sfedu02-gyb58550",
-        "database": database_name,
-        "schema": schema_name,
-        "session_parameters": {
-            "USE_CACHED_RESULT": False
-        }
-    }
-
-    return snowflake_config
-
 def get_query_stats(cur, query_id):
     query_id_str = f"'{query_id}'"
 
@@ -46,18 +30,15 @@ def get_query_stats(cur, query_id):
 
 
 
-def use_warehouse(cur, warehouse):
-    cur.execute(f"use warehouse {warehouse}")
-
 def main(repetitions,time_limit_minutes,file_name,db):
 
     if db == "Snowflake":
         print('Connecting to the Snowflake database...') 
         
-        connection_config = create_connection("DEEP_ROLE_DB", "PUBLIC")
+        connection_config = util.create_connection("DEEP_ROLE_DB", "PUBLIC")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
-        use_warehouse(cur, "ANIMAL_TASK_WH")
+        util.use_warehouse(cur, "ANIMAL_TASK_WH")
     elif db == "PostgreSql":
         print('Connecting to the PostgreSQL database...') 
         
@@ -120,7 +101,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             [test_id,
                             query,
                             db,
-                            "Wide_tree",
+                            "Deep_tree",
                             i,
                             role_num,
                             (start_query_time),
