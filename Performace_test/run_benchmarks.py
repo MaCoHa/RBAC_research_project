@@ -20,6 +20,6 @@ time_limit_minutes = 15
 #balanced.main(repetitions,time_limit_minutes,file_name="benchmark_balanced_tree_mariadb_stats",db="MariaDB")
 
 
-select.main(file_name="benchmark_select_star_snowflake_postgresql_stats")
+select.main(file_name="benchmark_select_star_role_1000_stats")
 
 

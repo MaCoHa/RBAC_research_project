@@ -121,8 +121,22 @@ def plot_snowflake_trees(measurement_points:list,repetitions:int):
                "Snowflake_Role_Tree_graphs")
     
 
+import pandas as pd
+from matplotlib import pyplot as plt
+import plotly.express as px
+
 if __name__ == "__main__":
-    plot_snowflake_trees([500,1_000,2_000,4_000,8_000,10_000],3)
+
+
+    df = pd.read_csv('Snowflake_latency.csv').query("TREE_QUERY_TYPE in ['GRANT_balanced_tree', 'CREATE_balanced_tree','GRANT_deep_tree', 'CREATE_deep_tree','GRANT_wide_tree', 'CREATE_wide_tree',]")
+    df = df.query("AVG_LATENCY_MS <= 1000")
+    #df = df.query("SECOND > 500")
+    
+    
+    fig = px.line(df, x="SECOND", y="AVG_LATENCY_MS", color="TREE_QUERY_TYPE",text="AVG_LATENCY_MS",symbol="TREE_QUERY_TYPE")
+    fig.update_traces(textposition="bottom right")
+    fig.show()
+
         
     
     

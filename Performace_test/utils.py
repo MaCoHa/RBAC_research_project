@@ -10,21 +10,21 @@ import snowflake.connector
 def create_log_select(file_name):
     os.makedirs('./benchmark', exist_ok=True)
     with open(f'./benchmark/{file_name}.csv', 'w') as file:
-            writer = csv.writer(file, delimiter=':')
-            writer.writerow(("test_id","query", "database", "tree_type","start_time","endtime"))
+            writer = csv.writer(file, delimiter=';')
+            writer.writerow(("test_id","query", "database", "tree_type","role_number","start_time","endtime"))
     
     
 
 def create_log_initial(file_name):
     os.makedirs('./benchmark', exist_ok=True)
     with open(f'./benchmark/{file_name}.csv', 'w') as file:
-            writer = csv.writer(file, delimiter=':')
+            writer = csv.writer(file, delimiter=';')
             writer.writerow(("test_id","query", "database", "tree_type", "repetition","role_number","start_time","endtime"))
     
     
 def append_to_log(file_name, data):
     with open(f'./benchmark/{file_name}.csv', 'a', newline='') as file:
-        writer = csv.writer(file, delimiter=':')
+        writer = csv.writer(file, delimiter=';')
         writer.writerow(data)
         
 
@@ -91,6 +91,15 @@ def postgres_config(filename='database.ini', section='postgresql'):
         raise Exception('Section {0} not found in the {1} file'.format(section, filename)) 
   
     return db
+
+def mariadb_connectionuser_config():
+    return mariadb.connect(
+            user="ConnectionUser",
+           # password=os.getenv('Mariadb_PWD'),
+            host="localhost",
+            port=3306,
+            database="Wide_db"
+    )   
 
 def mariadb_config(db_type):
     if db_type == "Wide_db":

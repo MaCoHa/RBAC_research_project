@@ -22,8 +22,8 @@ def generate_grant_table_querie(db,table,role):
     else:
         # MariaDB
          return [
-            f"grant all on wide_db to {role};",
-            f"grant all PRIVILEGES on {table} to ROLE{role};"
+            f"grant all on wide_db to Role{role};",
+            f"grant all PRIVILEGES on {table} to Role{role};"
          ]
 
 
