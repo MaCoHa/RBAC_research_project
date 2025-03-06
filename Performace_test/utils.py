@@ -5,6 +5,7 @@ import sql.cleanup_sql as cleanup
 import sql.grant_sql as grant
 import os
 import snowflake.connector
+from dotenv import load_dotenv
 
 
 def create_log_select(file_name):
@@ -17,7 +18,7 @@ def create_log_select(file_name):
 
 def create_log_initial(file_name):
     os.makedirs('./benchmark', exist_ok=True)
-    with open(f'./benchmark/{file_name}.csv', 'w') as file:
+    with open(f'./benchmark/{file_name}.csv', 'w',newline='') as file:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(("test_id","query", "database", "tree_type", "repetition","role_number","start_time","endtime"))
     
@@ -133,12 +134,14 @@ def mariadb_config(db_type):
 
 
 def create_connection(database_name, schema_name):
-    password = os.getenv('SNOWSQL_PWD')
+    load_dotenv()
+
+    password = os.getenv('Snowflake_pass')
 
     snowflake_config = {
-        "user": "CAT",
+        "user": "BLUEJAY",
         "password": password,
-        "account": "sfedu02-gyb58550",
+        "account": "sfedu02-HZB12071",
         "database": database_name,
         "schema": schema_name,
         "session_parameters": {
