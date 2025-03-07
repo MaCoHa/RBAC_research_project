@@ -35,7 +35,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
     if db == "Snowflake":
         print('Connecting to the Snowflake database...') 
         
-        connection_config = util.create_connection("DEEP_ROLE_DB", "PUBLIC")
+        connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
         util.use_warehouse(cur, "ANIMAL_TASK_WH")
@@ -99,7 +99,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
                             [test_id,
-                            query,
+                            query.replace(";",""),
                             db,
                             "Deep_tree",
                             i,

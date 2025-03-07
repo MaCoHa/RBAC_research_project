@@ -11,8 +11,12 @@ import psycopg2
 import mariadb
 import sys
 
-def wide_tree(cur,db,tree_size):
+def wide_tree(cur,db,tree_size,time_limit_minutes):
         role_num = 1
+
+        time_limit_seconds = time_limit_minutes * 60
+        start_time = time.time()
+
         while True:
             if tree_size < role_num:
                 print(f"reached role {role_num}. Exiting loop.")
@@ -21,11 +25,21 @@ def wide_tree(cur,db,tree_size):
             for query in wide.generate_role_queries(db,f"Role{role_num}"):
                 cur.execute(query)
             role_num += 1
+
+            elapsed_time = time.time() - start_time
+            if elapsed_time > time_limit_seconds:
+                print("Time limit reached. Exiting loop.")
+                return role_num
+        return 0
   
 
     
-def deep_tree(cur,db,tree_size):
+def deep_tree(cur,db,tree_size,time_limit_minutes):
         role_num = 1
+
+        time_limit_seconds = time_limit_minutes * 60
+        start_time = time.time()
+
         while True:
             if tree_size < role_num:
                 print(f"reached role {role_num}. Exiting loop.")
@@ -34,10 +48,21 @@ def deep_tree(cur,db,tree_size):
             for query in deep.generate_role_queries(db,f"Role{role_num}",f"Role{role_num-1}"):
                 cur.execute(query)
             role_num += 1
+
+            elapsed_time = time.time() - start_time
+            if elapsed_time > time_limit_seconds:
+                print("Time limit reached. Exiting loop.")
+                return role_num
+            
+        return 0
     
-def balanced_tree(cur,db,tree_size):
+def balanced_tree(cur,db,tree_size,time_limit_minutes):
         current = 0
         front = 1
+
+        time_limit_seconds = time_limit_minutes * 60
+        start_time = time.time()
+
         while True:
             if tree_size < front:
                 print(f"reached role {front}. Exiting loop.")
@@ -49,6 +74,11 @@ def balanced_tree(cur,db,tree_size):
             if (front % 4) == 0:
                     current += 1
             front += 1
-    
+
+            elapsed_time = time.time() - start_time
+            if elapsed_time > time_limit_seconds:
+                print("Time limit reached. Exiting loop.")
+                return front
+        return 0
     
     

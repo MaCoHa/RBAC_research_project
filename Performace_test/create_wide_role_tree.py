@@ -16,7 +16,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
     if db == "Snowflake":
         print('Connecting to the Snowflake database...') 
         
-        connection_config = util.create_connection("WIDE_ROLE_DB", "PUBLIC")
+        connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
         util.use_warehouse(cur, "ANIMAL_TASK_WH")
