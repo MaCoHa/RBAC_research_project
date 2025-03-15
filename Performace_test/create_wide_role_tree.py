@@ -14,32 +14,34 @@ import sys
 def main(repetitions,time_limit_minutes,file_name,db):
     
     if db == "Snowflake":
-        print('Connecting to the Snowflake database...') 
+        #print('Connecting to the Snowflake database...') 
         
         connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
         util.use_warehouse(cur, "ANIMAL_TASK_WH")
     elif db == "PostgreSql":
-        print('Connecting to the PostgreSQL database...') 
+        #print('Connecting to the PostgreSQL database...') 
         
-        params = util.postgres_config(section='postgresql_Wide') 
         # connect to the PostgreSQL server 
-        conn = psycopg2.connect(**params) 
+        conn = util.postgres_config()
         # autocommit commits querys to the database imediatly instead of
         #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
+        
+
     elif db == "MariaDB":
         # connect to the MariaDB server   
-        print('Connecting to the MariaDB database...') 
+        #print('Connecting to the MariaDB database...') 
         try:
             # connect to the MariaDB server 
-            conn = util.mariadb_config("Wide_db") 
+            conn = util.mariadb_config() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor()
+
 
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     
@@ -48,16 +50,13 @@ def main(repetitions,time_limit_minutes,file_name,db):
     util.create_log_initial(file_name)
     
     try:
-        print(f"Running wide role tree on {db}")
+        #print(f"Running wide role tree on {db}")
         
         # Run create roles
-        print("Running Create Roles")
+        #print("Running Create Roles")
         for i in range(repetitions):
             
-            if i < (repetitions - 1):
-                print(f"Running repetition {1+i} out of {repetitions}", end="\r")
-            else:
-                print(f"Running repetition {1+i} out of {repetitions}")
+          
                 
             start_time = time.time()
             role_num = 1

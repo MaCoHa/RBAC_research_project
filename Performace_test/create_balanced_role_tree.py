@@ -25,25 +25,28 @@ def main(repetitions,time_limit_minutes,file_name,db):
         util.use_warehouse(cur, "ANIMAL_TASK_WH")
         
     elif db == "PostgreSql":
-        print('Connecting to the PostgreSQL database...') 
+        #print('Connecting to the PostgreSQL database...') 
         
-        params = util.postgres_config(section='postgresql_Wide') 
-        # connect to the PostgreSQL server 
-        conn = psycopg2.connect(**params) 
+        conn = util.postgres_config()
+        
         # autocommit commits querys to the database imediatly instead of
         #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
+
+      
     else:
          # connect to the MariaDB server   
-        print('Connecting to the MariaDB database...') 
+        #print('Connecting to the MariaDB database...') 
         try:
             # connect to the MariaDB server 
-            conn = util.mariadb_config("Wide_db") 
+            conn = util.mariadb_config() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor() 
+    util.remove_roles(db,cur,60_590)
+    return
       
     
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -54,18 +57,12 @@ def main(repetitions,time_limit_minutes,file_name,db):
     util.create_log_initial(file_name)
     
     try:
-        print(f"Running balanced role tree on {db}")
+        #print(f"Running balanced role tree on {db}")
         
         # Run create roles
-        print("Running Create Roles")
+        #print("Running Create Roles")
         for i in range(repetitions):
-            
-            if i < (repetitions - 1):
-                print(f"Running repetition {1+i} out of {repetitions}", end="\r")
-            else:
-                print(f"Running repetition {1+i} out of {repetitions}")
-
-
+           
             start_time = time.time()
             current = 0
             front = 1

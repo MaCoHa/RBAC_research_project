@@ -1,6 +1,7 @@
 import csv
 
 import mariadb
+import psycopg2
 import sql.cleanup_sql as cleanup
 import sql.grant_sql as grant
 import os
@@ -75,60 +76,51 @@ def get_query_stats(cur, query_id):
 
 from configparser import ConfigParser 
   
-  
-def postgres_config(filename='database.ini', section='postgresql'): 
-    # create a parser 
-    parser = ConfigParser() 
-    # read config file 
-    parser.read(filename) 
+def postgres_config(): 
+    load_dotenv()
+    PORT= os.getenv('postgres_port')
+    USER= os.getenv('postgres_user')
+    PASSWORD= os.getenv('postgres_password')
+    DBNAME= os.getenv('postgres_dbname')
     
-    # get section, default to postgresql 
-    db = {} 
-    if parser.has_section(section): 
-        params = parser.items(section) 
-        for param in params: 
-            db[param[0]] = param[1] 
-    else: 
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename)) 
+    conn = psycopg2.connect(port=PORT,host="localhost", database=DBNAME, user=USER, password=PASSWORD) 
+    return conn
   
-    return db
+def postgres_config_remote(): 
+    load_dotenv()
+
+    ENDPOINT=  os.getenv('ENDPOINT') 
+    PORT= os.getenv('PORT')
+    USER= os.getenv('USER')
+    PASSWORD= os.getenv('PASSWORD')
+    DBNAME= os.getenv('DBNAME')
+    # get section, default to postgresql 
+    conn = psycopg2.connect(host=ENDPOINT, port=PORT, database=DBNAME, user=USER, password=PASSWORD) 
+    return conn
 
 def mariadb_connectionuser_config():
-    return mariadb.connect(
-            user="ConnectionUser",
-           # password=os.getenv('Mariadb_PWD'),
-            host="localhost",
-            port=3306,
-            database="Wide_db"
-    )   
+    load_dotenv()
+    PORT= os.getenv('mariadb_port')
+    USER= os.getenv('mariadb_1_user')
+    PASSWORD= os.getenv('mariadb_1_password')
+    DBNAME= os.getenv('mariadb_dbname')
 
-def mariadb_config(db_type):
-    if db_type == "Wide_db":
-       return mariadb.connect(
-            user="root",
-            password=os.getenv('Mariadb_PWD'),
-            host="localhost",
-            port=3306,
-            database="Wide_db"
-        )
-        
-    elif db_type == "Deep_db":
-        return mariadb.connect(
-            user="ConnectionUser",
-            password=os.getenv('Mariadb_PWD'),
-            host="localhost",
-            port=3306,
-            database="Deep_db"
-        )
-        
-    elif db_type == "Balanced_db":
-        return mariadb.connect(
-            user="ConnectionUser",
-            password=os.getenv('Mariadb_PWD'),
-            host="localhost",
-            port=3306,
-            database="Balanced_db"
-        )
+    
+    conn = mariadb.connect(host="localhost", database=DBNAME,  user=USER, password=PASSWORD) 
+    return conn
+
+def mariadb_config():
+
+
+    load_dotenv()
+    PORT= os.getenv('mariadb_port')
+    USER= os.getenv('mariadb_user')
+    PASSWORD= os.getenv('mariadb_password')
+    DBNAME= os.getenv('mariadb_dbname')
+
+    
+    conn = mariadb.connect(host="localhost",database=DBNAME, user=USER, password=PASSWORD) 
+    return conn
     
 
 

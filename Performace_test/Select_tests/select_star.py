@@ -28,7 +28,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
     for tree_size in tree_sizes:
         
         if database == "Snowflake":
-            print('Connecting to the Snowflake database...') 
+            #print('Connecting to the Snowflake database...') 
             
             connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
             conn = snowflake.connector.connect(**connection_config)
@@ -36,21 +36,19 @@ def main(file_name,database,tree_type,time_limit_minutes):
             util.use_warehouse(cur, "ANIMAL_TASK_WH")
             
         elif database == "PostgreSql":
-            print('Connecting to the PostgreSQL database...') 
+            #print('Connecting to the PostgreSQL database...') 
             
-            params = util.postgres_config(section='postgresql_Wide') 
-            # connect to the PostgreSQL server 
-            conn = psycopg2.connect(**params) 
+            conn = util.postgres_config() 
             # autocommit commits querys to the database imediatly instead of
             #storing the transaction localy
             conn.autocommit = True
             cur = conn.cursor() 
             
         elif database == "MariaDB": 
-            print('Connecting to the MariaDB database...') 
+            #print('Connecting to the MariaDB database...') 
             try:
                 # connect to the MariaDB server 
-                conn = util.mariadb_config("Wide_db") 
+                conn = util.mariadb_config() 
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
@@ -58,7 +56,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
         cur = conn.cursor()
 
         try:
-            print(f'Create tree {tree_type} on db : {database}') 
+            #print(f'Create tree {tree_type} on db : {database}') 
             if tree_type == "Wide_tree":
                 
                 control_val = create.wide_tree(cur,database,tree_size,time_limit_minutes)
@@ -95,6 +93,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
             
             for query in sql.generate_grant_table_querie(database,table,tree_size):
                 start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                print(query)
                 cur.execute(query)
                 end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                 util.append_to_log(file_name,
@@ -125,7 +124,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
                         (start_query_time),
                         (end_query_time)])
             else:
-                print('Connecting to the MariaDB ConnectionUser') 
+                #print('Connecting to the MariaDB ConnectionUser') 
                 try:
                     # connect to the MariaDB server 
                     conn2 = util.mariadb_connectionuser_config() 
@@ -144,6 +143,8 @@ def main(file_name,database,tree_type,time_limit_minutes):
                             tree_size,
                             (start_query_time),
                             (end_query_time)])
+                    
+
                 except mariadb.Error as e:
                     print(f"Error connecting to MariaDB Platform: {e}")
                     sys.exit(1)

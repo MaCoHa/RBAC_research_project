@@ -12,19 +12,7 @@ import utils as util
 
 
 
-def get_query_stats(cur, query_id):
-    query_id_str = f"'{query_id}'"
 
-    stats_query = f"""
-    SELECT query_id, schema_name, warehouse_size, total_elapsed_time/1000 AS time_elapsed_in_seconds, total_elapsed_time AS total_elapsed_time_milli
-    FROM
-        table(information_schema.query_history())
-    WHERE user_name = 'CAT' and execution_status = 'SUCCESS' and query_id = {query_id_str}
-    ORDER BY start_time desc;
-    """
-    
-    cur.execute(stats_query)
-    return cur.fetchall()
 
 
 
@@ -33,28 +21,28 @@ def get_query_stats(cur, query_id):
 def main(repetitions,time_limit_minutes,file_name,db):
 
     if db == "Snowflake":
-        print('Connecting to the Snowflake database...') 
+        #print('Connecting to the Snowflake database...') 
         
         connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
         util.use_warehouse(cur, "ANIMAL_TASK_WH")
     elif db == "PostgreSql":
-        print('Connecting to the PostgreSQL database...') 
+        #print('Connecting to the PostgreSQL database...') 
         
-        params = util.postgres_config(section='postgresql_Wide') 
-        # connect to the PostgreSQL server 
-        conn = psycopg2.connect(**params) 
+        conn = util.postgres_config()
         # autocommit commits querys to the database imediatly instead of
         #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
+
+       
     else:
          # connect to the MariaDB server   
-        print('Connecting to the MariaDB database...') 
+        #print('Connecting to the MariaDB database...') 
         try:
             # connect to the MariaDB server 
-            conn = util.mariadb_config("Wide_db") 
+            conn = util.mariadb_config() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
@@ -72,16 +60,13 @@ def main(repetitions,time_limit_minutes,file_name,db):
 
     try:
         
-        print(f"Running deep role tree on {db}")
+        #print(f"Running deep role tree on {db}")
         
         # Run create roles
-        print("Running Create Roles")
+        #print("Running Create Roles")
         for i in range(repetitions):
             
-            if i < (repetitions - 1):
-                print(f"Running repetition {1+i} out of {repetitions}", end="\r")
-            else:
-                print(f"Running repetition {1+i} out of {repetitions}")
+           
 
             start_time = time.time()
             role_num = 1
