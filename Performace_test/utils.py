@@ -89,13 +89,12 @@ def postgres_config():
 def postgres_config_remote(): 
     load_dotenv()
 
-    ENDPOINT=  os.getenv('ENDPOINT') 
-    PORT= os.getenv('PORT')
-    USER= os.getenv('USER')
-    PASSWORD= os.getenv('PASSWORD')
-    DBNAME= os.getenv('DBNAME')
+    HOST=os.getenv('postgres_remote_HOST')
+    USER= os.getenv('postgres_remote_USER')
+    PASSWORD= os.getenv('postgres_remote_PASSWORD')
+    DBNAME= os.getenv('postgres_remote_DBNAME')
     # get section, default to postgresql 
-    conn = psycopg2.connect(host=ENDPOINT, port=PORT, database=DBNAME, user=USER, password=PASSWORD) 
+    conn = psycopg2.connect(host=HOST, database=DBNAME, user=USER, password=PASSWORD) 
     return conn
 
 def mariadb_connectionuser_config():
@@ -123,6 +122,29 @@ def mariadb_config():
     return conn
     
 
+def mariadb_connectionuser_config_remote():
+    load_dotenv()
+    HOST=os.getenv('mariadb_remote_HOST')
+    USER= os.getenv('mariadb_remote_1_USER')
+    PASSWORD= os.getenv('mariadb_remote_1_PASSWORD')
+    DBNAME= os.getenv('mariadb_remote_DBNAME')
+
+    
+    conn = mariadb.connect(host=HOST, database=DBNAME,  user=USER, password=PASSWORD) 
+    return conn
+
+def mariadb_config_remote():
+
+
+    load_dotenv()
+    HOST=os.getenv('mariadb_remote_HOST')
+    USER= os.getenv('mariadb_remote_USER')
+    PASSWORD= os.getenv('mariadb_remote_PASSWORD')
+    DBNAME= os.getenv('mariadb_remote_DBNAME')
+
+    conn = mariadb.connect(host=HOST, database=DBNAME,  user=USER, password=PASSWORD) 
+    
+    return conn
 
 
 def create_connection(database_name, schema_name):

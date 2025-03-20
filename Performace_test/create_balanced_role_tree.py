@@ -27,7 +27,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
     elif db == "PostgreSql":
         #print('Connecting to the PostgreSQL database...') 
         
-        conn = util.postgres_config()
+        conn = util.postgres_config_remote()
         
         # autocommit commits querys to the database imediatly instead of
         #storing the transaction localy
@@ -40,7 +40,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
         #print('Connecting to the MariaDB database...') 
         try:
             # connect to the MariaDB server 
-            conn = util.mariadb_config() 
+            conn = util.mariadb_config_remote() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
