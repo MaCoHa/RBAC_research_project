@@ -14,10 +14,10 @@ import Select_tests.create_trees as create
 
 table = "foo"
 ### True sizes
-tree_sizes = [1000,10_000,100_000]
+#tree_sizes = [1000,10_000,100_000]
 
 ### Test sizes 
-#tree_sizes = [1,100,1000]
+tree_sizes = [1,10]
 
 def main(file_name,database,tree_type,time_limit_minutes):
     
@@ -39,6 +39,15 @@ def main(file_name,database,tree_type,time_limit_minutes):
             #print('Connecting to the PostgreSQL database...') 
             
             conn = util.postgres_config() 
+            # autocommit commits querys to the database imediatly instead of
+            #storing the transaction localy
+            conn.autocommit = True
+            cur = conn.cursor() 
+        elif database == "PostgreSql_EC2":
+            #print('Connecting to the PostgreSQL database...') 
+            
+            # connect to the PostgreSQL server 
+            conn = util.postgres_config_remote()
             # autocommit commits querys to the database imediatly instead of
             #storing the transaction localy
             conn.autocommit = True
@@ -85,7 +94,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
                     break
                 
             else:
-                print("unkown tree line 69")
+                print("unkown tree")
                 sys.exit(1)
                 
                 

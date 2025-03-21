@@ -24,6 +24,15 @@ def main(repetitions,time_limit_minutes,file_name,db):
         #print('Connecting to the PostgreSQL database...') 
         
         # connect to the PostgreSQL server 
+        conn = util.postgres_config()
+        # autocommit commits querys to the database imediatly instead of
+        #storing the transaction localy
+        conn.autocommit = True
+        cur = conn.cursor() 
+    elif db == "PostgreSql_EC2":
+        #print('Connecting to the PostgreSQL database...') 
+        
+        # connect to the PostgreSQL server 
         conn = util.postgres_config_remote()
         # autocommit commits querys to the database imediatly instead of
         #storing the transaction localy
@@ -32,6 +41,17 @@ def main(repetitions,time_limit_minutes,file_name,db):
         
 
     elif db == "MariaDB":
+        # connect to the MariaDB server   
+        #print('Connecting to the MariaDB database...') 
+        try:
+            # connect to the MariaDB server 
+            conn = util.mariadb_config() 
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cur = conn.cursor()
+
+    elif db == "MariaDB_EC2":
         # connect to the MariaDB server   
         #print('Connecting to the MariaDB database...') 
         try:
