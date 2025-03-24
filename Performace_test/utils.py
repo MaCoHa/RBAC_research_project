@@ -34,9 +34,9 @@ def grant_table(db,cur,role_num,table_name):
       for query in grant.generate_grant_table_querie(db,table_name,role_num):
         if db == "Snowflake":
             cur.execute(query)
-        elif db == "PostgreSql":
+        elif db == "PostgreSql" or db == "PostgreSQL_EC2":
             cur.execute(query)
-        elif db == "MariaDB":
+        elif db == "MariaDB" or db == "MariaDB_EC2":
             cur.execute(query)  
         
 def remove_roles(db,cur,num_of_roles):
@@ -46,10 +46,11 @@ def remove_roles(db,cur,num_of_roles):
         if db == "Snowflake":
             #print(f"{db} : {query}")
             cur.execute(query)
-        elif db == "PostgreSql":
+        elif db == "PostgreSql" or db == "PostgreSQL_EC2":
+
             #print(f"{db} : {query}")
             cur.execute(query)
-        elif db == "MariaDB":
+        elif db == "MariaDB" or db == "MariaDB_EC2":
             #print(f"{db} : {query}")
             cur.execute(query)
 
