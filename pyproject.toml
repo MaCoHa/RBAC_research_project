@@ -1,0 +1,11 @@
+[project]
+name = "rbac-research-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mariadb>=1.1.12",
+    "psycopg2>=2.9.10",
+    "snowflake-connector-python>=3.14.0",
+]
