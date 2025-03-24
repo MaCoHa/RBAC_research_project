@@ -34,11 +34,11 @@ def main(file_name,database,tree_type,time_limit_minutes):
             conn = snowflake.connector.connect(**connection_config)
             cur = conn.cursor()
             util.use_warehouse(cur, "ANIMAL_TASK_WH")
-            
         elif database == "PostgreSql":
             #print('Connecting to the PostgreSQL database...') 
             
-            conn = util.postgres_config() 
+            # connect to the PostgreSQL server 
+            conn = util.postgres_config()
             # autocommit commits querys to the database imediatly instead of
             #storing the transaction localy
             conn.autocommit = True
@@ -53,7 +53,9 @@ def main(file_name,database,tree_type,time_limit_minutes):
             conn.autocommit = True
             cur = conn.cursor() 
             
-        elif database == "MariaDB": 
+
+        elif database == "MariaDB":
+            # connect to the MariaDB server   
             #print('Connecting to the MariaDB database...') 
             try:
                 # connect to the MariaDB server 
@@ -61,8 +63,19 @@ def main(file_name,database,tree_type,time_limit_minutes):
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
-                
-        cur = conn.cursor()
+            cur = conn.cursor()
+
+        elif database == "MariaDB_EC2":
+            # connect to the MariaDB server   
+            #print('Connecting to the MariaDB database...') 
+            try:
+                # connect to the MariaDB server 
+                conn = util.mariadb_config_remote() 
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}")
+                sys.exit(1)
+            cur = conn.cursor()
+
 
         try:
             #print(f'Create tree {tree_type} on db : {database}') 
