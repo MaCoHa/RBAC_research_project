@@ -12,7 +12,7 @@ def generate_grant_table_querie(db,table,role):
             f"USE ROLE ROLE0;"
             
         ]
-    elif db == "PostgreSql":
+    elif db == "PostgreSql" or db == "PostgreSql_EC2":
         return [
             f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA information_schema TO ROLE{role};"
             f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ROLE{role};",

@@ -178,7 +178,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
             
             if database == "Snowflake":
                 cur.execute("USE ROLE TRAINING_ROLE;")
-            elif database == "PostgreSql":
+            elif database == "PostgreSql" or database == "PostgreSql_EC2":
                 cur.execute("SET ROLE postgres;")
             #****************************************************************
             #
@@ -188,7 +188,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
             
             if database == "Snowflake":
                 query = "SHOW ROLES;"
-            elif database == "PostgreSql":
+            elif database == "PostgreSql" or database == "PostgreSql_EC2":
                 query = "SELECT * FROM pg_roles;"
             elif database == "MariaDB":
                 query = "SELECT `User` FROM mysql.user WHERE is_role='Y';"
@@ -235,7 +235,7 @@ def main(file_name,database,tree_type,time_limit_minutes):
             
             
             # remove PRIVILEGES from role so i can be deletede
-            if database == "PostgreSql":
+            if database == "PostgreSql" or database == "PostgreSql_EC2":
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA information_schema FROM Role{tree_size};")
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM Role{tree_size};")
                 cur.execute(f"REVOKE  ALL PRIVILEGES  ON  {table} FROM  Role{tree_size};")
