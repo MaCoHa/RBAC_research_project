@@ -41,9 +41,9 @@ def grant_table(db,cur,role_num,table_name):
         
 def remove_roles(db,cur,num_of_roles):
     # drops roles from 1 to num_of_roles
-    print("Deleting roles")
-    print(f"role num {num_of_roles}" )
-    print(f"database {db}" )
+    #print("Deleting roles")
+    #print(f"role num {num_of_roles}" )
+    #print(f"database {db}" )
 
     for query in cleanup.generate_drop_role_queries(num_of_roles):
         
@@ -52,7 +52,7 @@ def remove_roles(db,cur,num_of_roles):
             cur.execute(query)
         elif db == "PostgreSql" or db == "PostgreSql_EC2":
 
-            print(f"{db} : {query}")
+            #print(f"{db} : {query}")
             cur.execute(query)
         elif db == "MariaDB" or db == "MariaDB_EC2":
             #print(f"{db} : {query}")
