@@ -8,5 +8,6 @@ dependencies = [
     "mariadb>=1.1.12",
     "psycopg2>=2.9.10",
     "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.0.1",
     "snowflake-connector-python>=3.14.0",
 ]
