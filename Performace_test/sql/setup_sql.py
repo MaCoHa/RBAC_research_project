@@ -27,7 +27,7 @@ def generate_setup_queries(db):
 
             "GRANT Role0 TO 'connection'@'%';",
 
-            "use mariadb;"
+            "use mariadb;",
             """CREATE OR REPLACE TABLE FOO (    
             website_name VARCHAR(25) NOT NULL,    
             server_name VARCHAR(20),    
