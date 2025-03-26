@@ -25,7 +25,7 @@ def generate_setup_queries(db):
             "CREATE ROLE Role0;",
             "CREATE USER 'connection'@'%' IDENTIFIED BY 'mariadb_test';",
 
-            "GRANT Role0 TO connection;",
+            "GRANT Role0 TO 'connection'@'%';",
 
 
             """CREATE TABLE FOO (    
