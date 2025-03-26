@@ -28,12 +28,12 @@ def generate_setup_queries(db):
             "GRANT Role0 TO 'connection'@'%';",
 
 
-            """CREATE TABLE mariadb.FOO (    
+            """CREATE OR REPLACE TABLE mariadb.foo (    
             website_name VARCHAR(25) NOT NULL,    
             server_name VARCHAR(20),    
             creation_date DATE);""",
 
-            """INSERT INTO mariadb.FOO (website_name, server_name, creation_date)
+            """INSERT INTO mariadb.foo (website_name, server_name, creation_date)
             VALUES ('example.com', 'server01', '2024-11-06');"""
         ]
 
