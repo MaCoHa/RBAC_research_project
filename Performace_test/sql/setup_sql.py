@@ -22,10 +22,10 @@ def generate_setup_queries(db):
     else:
         # MariaDB
          return [
-            "CREATE ROLE ROLE0;",
+            "CREATE ROLE Role0;",
             "CREATE USER 'connection'@'%' IDENTIFIED BY 'mariadb_test';",
 
-            "GRANT ROLE0 TO connection;",
+            "GRANT Role0 TO connection;",
 
 
             """CREATE TABLE FOO (    
