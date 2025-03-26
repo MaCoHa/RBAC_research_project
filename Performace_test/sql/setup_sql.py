@@ -22,8 +22,8 @@ def generate_setup_queries(db):
     else:
         # MariaDB
          return [
-            "CREATE ROLE Role0;",
-            "CREATE USER 'connection'@'%' IDENTIFIED BY 'mariadb_test';",
+            "CREATE OR REPLACE ROLE Role0;",
+            "CREATE OR REPLACE USER 'connection'@'%' IDENTIFIED BY 'mariadb_test';",
 
             "GRANT Role0 TO 'connection'@'%';",
 
