@@ -115,7 +115,9 @@ def main(repetitions,time_limit_minutes,file_name,db):
                
                 
             # run clean up roles  
-            util.remove_roles(db,cur,front)
+            #util.remove_roles(db,cur,front)
+            util.remove_roles_log(db,cur,front,file_name,test_id,i,"balanced_tree")
+
   
                 
 
