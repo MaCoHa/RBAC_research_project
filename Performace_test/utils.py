@@ -13,7 +13,7 @@ def create_log_select(file_name):
     os.makedirs('./benchmark', exist_ok=True)
     with open(f'./benchmark/{file_name}.csv', 'w') as file:
             writer = csv.writer(file, delimiter=';')
-            writer.writerow(("test_id","query", "database", "tree_type","role_number","start_time","endtime"))
+            writer.writerow(("test_id","query", "database", "tree_type","role_number","repetitions","start_time","endtime"))
     
     
 

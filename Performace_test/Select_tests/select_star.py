@@ -19,7 +19,7 @@ table = "foo"
 ### Test sizes 
 tree_sizes = [1,10]
 
-def main(file_name,database,tree_type,time_limit_minutes):
+def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     
@@ -112,50 +112,32 @@ def main(file_name,database,tree_type,time_limit_minutes):
                 
                 
                 
-            
-            for query in sql.generate_grant_table_querie(database,table,tree_size):
-                start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                print(query)
-                cur.execute(query)
-                end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                util.append_to_log(file_name,
-                        [test_id,
-                        query.replace(";",""),
-                        database,
-                        tree_type,
-                        tree_size,
-                        (start_query_time),
-                        (end_query_time)])
-            
-                
-            #****************************************************************
-            #
-            # Select * from foo query
-            #
-            #****************************************************************    
-            if database != "MariaDB":
-                start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                cur.execute(f"SELECT * FROM {table};")
-                end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                util.append_to_log(file_name,
-                        [test_id,
-                        f"SELECT * FROM {table}",
-                        database,
-                        tree_type,
-                        tree_size,
-                        (start_query_time),
-                        (end_query_time)])
-            else:
-                #print('Connecting to the MariaDB ConnectionUser') 
-                try:
-                    # connect to the MariaDB server 
-                    conn2 = util.mariadb_connectionuser_config() 
-                
-                    cur2 = conn2.cursor()
-                    cur2.execute("SET ROLE Role0;")
-                    
+            for rep in range(repetitions):
+
+                for query in sql.generate_grant_table_querie(database,table,tree_size):
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                    cur2.execute(f"SELECT * FROM {table};")
+                    print(query)
+                    cur.execute(query)
+                    end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                    util.append_to_log(file_name,
+                            [test_id,
+                            query.replace(";",""),
+                            database,
+                            tree_type,
+                            tree_size,
+                            rep,
+                            (start_query_time),
+                            (end_query_time)])
+                
+                    
+                #****************************************************************
+                #
+                # Select * from foo query
+                #
+                #****************************************************************    
+                if database != "MariaDB":
+                    start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                    cur.execute(f"SELECT * FROM {table};")
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
                             [test_id,
@@ -163,76 +145,100 @@ def main(file_name,database,tree_type,time_limit_minutes):
                             database,
                             tree_type,
                             tree_size,
+                            rep,
                             (start_query_time),
                             (end_query_time)])
+                else:
+                    #print('Connecting to the MariaDB ConnectionUser') 
+                    try:
+                        # connect to the MariaDB server 
+                        conn2 = util.mariadb_connectionuser_config() 
                     
+                        cur2 = conn2.cursor()
+                        cur2.execute("SET ROLE Role0;")
+                        
+                        start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                        cur2.execute(f"SELECT * FROM {table};")
+                        end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                        util.append_to_log(file_name,
+                                [test_id,
+                                f"SELECT * FROM {table}",
+                                database,
+                                tree_type,
+                                tree_size,
+                                rep,    
+                                (start_query_time),
+                                (end_query_time)])
+                        
 
-                except mariadb.Error as e:
-                    print(f"Error connecting to MariaDB Platform: {e}")
-                    sys.exit(1)
-                finally:
-                    cur2.close()
-                    conn2.close()
+                    except mariadb.Error as e:
+                        print(f"Error connecting to MariaDB Platform: {e}")
+                        sys.exit(1)
+                    finally:
+                        cur2.close()
+                        conn2.close()
+                        
                     
                 
-            
-            if database == "Snowflake":
-                cur.execute("USE ROLE TRAINING_ROLE;")
-            elif database == "PostgreSql" or database == "PostgreSql_EC2":
-                cur.execute("SET ROLE postgres;")
-            #****************************************************************
-            #
-            # show roles
-            # 
-            #**************************************************************** 
-            
-            if database == "Snowflake":
-                query = "SHOW ROLES;"
-            elif database == "PostgreSql" or database == "PostgreSql_EC2":
-                query = "SELECT * FROM pg_roles;"
-            elif database == "MariaDB":
-                query = "SELECT `User` FROM mysql.user WHERE is_role='Y';"
+                if database == "Snowflake":
+                    cur.execute("USE ROLE TRAINING_ROLE;")
+                elif database == "PostgreSql" or database == "PostgreSql_EC2":
+                    cur.execute("SET ROLE postgres;")
+                #****************************************************************
+                #
+                # show roles
+                # 
+                #**************************************************************** 
                 
-            start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-            cur.execute(query)
-            end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-            util.append_to_log(file_name,
-                    [test_id,
-                    "SHOW ROLES",
-                    database,
-                    tree_type,
-                    tree_size,
-                    (start_query_time),
-                    (end_query_time)])
-
-
-            
-            #****************************************************************
-            #
-            # show information schema
-            #
-            #**************************************************************** 
-            
-            queries = [
-                "SELECT * FROM INFORMATION_SCHEMA.APPLICABLE_ROLES;",
-                "SELECT * FROM INFORMATION_SCHEMA.ENABLED_ROLES;",
-                "SELECT * FROM INFORMATION_SCHEMA.TABLE_PRIVILEGES;"     
-            ]
-                
-            
-            for q in queries:
+                if database == "Snowflake":
+                    query = "SHOW ROLES;"
+                elif database == "PostgreSql" or database == "PostgreSql_EC2":
+                    query = "SELECT * FROM pg_roles;"
+                elif database == "MariaDB":
+                    query = "SELECT `User` FROM mysql.user WHERE is_role='Y';"
+                    
                 start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                cur.execute(q)
+                cur.execute(query)
                 end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                 util.append_to_log(file_name,
                         [test_id,
-                        q.replace(";",""),
+                        "SHOW ROLES",
                         database,
                         tree_type,
                         tree_size,
+                        rep,
                         (start_query_time),
                         (end_query_time)])
-            
+
+
+                
+                #****************************************************************
+                #
+                # show information schema
+                #
+                #**************************************************************** 
+                
+                queries = [
+                    "SELECT * FROM INFORMATION_SCHEMA.APPLICABLE_ROLES;",
+                    "SELECT * FROM INFORMATION_SCHEMA.ENABLED_ROLES;",
+                    "SELECT * FROM INFORMATION_SCHEMA.TABLE_PRIVILEGES;"     
+                ]
+                    
+                
+                for q in queries:
+                    start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                    cur.execute(q)
+                    end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                    util.append_to_log(file_name,
+                            [test_id,
+                            q.replace(";",""),
+                            database,
+                            tree_type,
+                            tree_size,
+                            rep,
+                            (start_query_time),
+                            (end_query_time)])
+                
             
             # remove PRIVILEGES from role so i can be deletede
             if database == "PostgreSql" or database == "PostgreSql_EC2":
