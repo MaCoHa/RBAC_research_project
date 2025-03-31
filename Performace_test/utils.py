@@ -1,4 +1,5 @@
 import csv
+import time
 
 import mariadb
 import psycopg2
@@ -46,20 +47,24 @@ def remove_roles(db,cur,num_of_roles):
     #print(f"database {db}" )
 
     for query in cleanup.generate_drop_role_queries(num_of_roles):
-        
-        if db == "Snowflake":
-            #print(f"{db} : {query}")
-            cur.execute(query)
-        elif db == "PostgreSql" or db == "PostgreSql_EC2":
-
-            #print(f"{db} : {query}")
-            cur.execute(query)
-        elif db == "MariaDB" or db == "MariaDB_EC2":
-            #print(f"{db} : {query}")
             cur.execute(query)
 
-        
- 
+
+def remove_roles_log(db,cur,num_of_roles,file_name,test_id,rep,tree_type):
+
+    for query in cleanup.generate_drop_role_queries(num_of_roles):
+        start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+        cur.execute(query)
+        end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+        append_to_log(file_name,
+                [test_id,
+                query.replace(";",""),
+                db,
+                tree_type,
+                rep,
+                0,
+                (start_query_time),
+                (end_query_time)])
 
 
 
