@@ -535,3 +535,4 @@ MigrationBackup/
 
 benchmark/
 .env
+Exel/Select_star.xlsx
