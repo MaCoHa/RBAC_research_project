@@ -25,7 +25,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
     util.create_log_select(file_name)
 
-    for tree_size in tree_sizes:
+    for index,tree_size in enumerate(tree_sizes):
         
         if database == "Snowflake":
             #print('Connecting to the Snowflake database...') 
@@ -86,6 +86,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 if control_val != 0:
                     print(f'Time limit exceded terminating tests for {tree_type} on db : {database}')
                     util.remove_roles(database,cur,control_val)
+                    util.add_fill_logs(file_name,database,test_id,index,"Wide_tree",tree_sizes)
                     break
             elif tree_type == "Deep_tree":
                 
@@ -94,7 +95,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 if control_val != 0:
                     print(f'Time limit exceded terminating tests for {tree_type} on db : {database}')
                     util.remove_roles(database,cur,control_val)
-
+                    util.add_fill_logs(file_name,database,test_id,index,"Deep_tree",tree_sizes)
                     break
                 
             elif tree_type == "Balanced_tree":
@@ -104,6 +105,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 if control_val != 0:
                     print(f'Time limit exceded terminating tests for {tree_type} on db : {database}')
                     util.remove_roles(database,cur,control_val)
+                    util.add_fill_logs(file_name,database,test_id,index,"Balanced_tree",tree_sizes)
                     break
                 
             else:

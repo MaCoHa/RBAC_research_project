@@ -49,7 +49,6 @@ def remove_roles(db,cur,num_of_roles):
     for query in cleanup.generate_drop_role_queries(num_of_roles):
             cur.execute(query)
 
-
 def remove_roles_log(db,cur,num_of_roles,file_name,test_id,rep,tree_type):
 
     for query in cleanup.generate_drop_role_queries(num_of_roles):
@@ -67,6 +66,26 @@ def remove_roles_log(db,cur,num_of_roles,file_name,test_id,rep,tree_type):
                 (end_query_time)])
 
 
+def add_fill_logs(file_name,db,test_id,index,tree_type,tree_sizes):
+    queries = [
+        "SELECT * FROM foo",
+        "SHOW ROLES",
+        "SELECT * FROM INFORMATION_SCHEMA.APPLICABLE_ROLES;",
+        "SELECT * FROM INFORMATION_SCHEMA.ENABLED_ROLES;",
+        "SELECT * FROM INFORMATION_SCHEMA.TABLE_PRIVILEGES;"    
+    ]
+    for i in range(index,3):
+        for q in queries:
+            append_to_log(file_name,
+                [test_id,
+                q.replace(";",""),
+                db,
+                tree_type,
+                tree_sizes[i],
+                0,
+                0])
+            
+     
 
 def get_query_stats(cur, query_id):
     query_id_str = f"'{query_id}'"
