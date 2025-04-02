@@ -14,10 +14,10 @@ import Select_tests.create_trees as create
 
 table = "foo"
 ### True sizes
-#tree_sizes = [1000,10_000,100_000]
+tree_sizes = [1000,10_000,100_000]
 
 ### Test sizes 
-tree_sizes = [1,10]
+#tree_sizes = [1,10]
 
 def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
@@ -112,11 +112,10 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
                 
                 
-            for rep in range(repetitions):
 
                 for query in sql.generate_grant_table_querie(database,table,tree_size):
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                    print(query)
+                    #print(query)
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
@@ -125,10 +124,11 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                             database,
                             tree_type,
                             tree_size,
-                            rep,
+                            0,
                             (start_query_time),
                             (end_query_time)])
                 
+            for rep in range(repetitions):
                     
                 #****************************************************************
                 #
