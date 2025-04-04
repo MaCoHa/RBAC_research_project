@@ -24,16 +24,8 @@ def generate_setup_queries(db):
          return [
             "CREATE OR REPLACE ROLE Role0;",
             "CREATE OR REPLACE USER 'connection'@'%' IDENTIFIED BY 'mariadb_test';",
-
             "GRANT Role0 TO 'connection'@'%';",
-
-
-            """CREATE OR REPLACE TABLE mariadb.foo (    
-            website_name VARCHAR(25) NOT NULL,    
-            server_name VARCHAR(20),    
-            creation_date DATE);""",
-
-            """INSERT INTO mariadb.foo (website_name, server_name, creation_date)
-            VALUES ('example.com', 'server01', '2024-11-06');"""
+            "CREATE OR REPLACE TABLE mariadb.foo (website_name VARCHAR(25) NOT NULL, server_name VARCHAR(20), creation_date DATE);",
+            "INSERT INTO mariadb.foo (website_name, server_name, creation_date) VALUES ('example.com', 'server01', '2024-11-06');"
         ]
 

@@ -158,6 +158,8 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                     
                         cur2 = conn2.cursor()
                         cur2.execute("SET ROLE Role0;")
+                        cur2.execute("Use mariadb;")
+
                         
                         start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                         cur2.execute(f"SELECT * FROM {table};")
