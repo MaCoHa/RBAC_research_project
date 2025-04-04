@@ -137,7 +137,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 # Select * from foo query
                 #
                 #****************************************************************    
-                if database != "MariaDB":
+                if database != "MariaDB" and database != "MariaDB_EC2":
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     cur.execute(f"SELECT * FROM {table};")
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
@@ -196,7 +196,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                     query = "SHOW ROLES;"
                 elif database == "PostgreSql" or database == "PostgreSql_EC2":
                     query = "SELECT * FROM pg_roles;"
-                elif database == "MariaDB":
+                elif database == "MariaDB" or database == "MariaDB_EC2":
                     query = "SELECT `User` FROM mysql.user WHERE is_role='Y';"
                     
                 start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
