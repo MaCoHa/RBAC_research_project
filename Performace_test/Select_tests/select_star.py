@@ -154,7 +154,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                     #print('Connecting to the MariaDB ConnectionUser') 
                     try:
                         # connect to the MariaDB server 
-                        conn2 = util.mariadb_connectionuser_config() 
+                        conn2 = util.mariadb_connectionuser_config_remote() 
                     
                         cur2 = conn2.cursor()
                         cur2.execute("SET ROLE Role0;")
