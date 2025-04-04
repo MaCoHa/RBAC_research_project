@@ -115,20 +115,20 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
                 
 
-                for query in sql.generate_grant_table_querie(database,table,tree_size):
-                    start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                    #print(query)
-                    cur.execute(query)
-                    end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                    util.append_to_log(file_name,
-                            [test_id,
-                            query.replace(";",""),
-                            database,
-                            tree_type,
-                            tree_size,
-                            0,
-                            (start_query_time),
-                            (end_query_time)])
+            for query in sql.generate_grant_table_querie(database,table,tree_size):
+                start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                #print(query)
+                cur.execute(query)
+                end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
+                util.append_to_log(file_name,
+                        [test_id,
+                        query.replace(";",""),
+                        database,
+                        tree_type,
+                        tree_size,
+                        0,
+                        (start_query_time),
+                        (end_query_time)])
                 
             for rep in range(repetitions):
                     
