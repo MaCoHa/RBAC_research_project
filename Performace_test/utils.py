@@ -156,7 +156,6 @@ def mariadb_connectionuser_config_remote():
     HOST=os.getenv('mariadb_remote_HOST')
     USER= os.getenv('mariadb_remote_1_USER')
     PASSWORD= os.getenv('mariadb_remote_1_PASSWORD')
-    DBNAME= os.getenv('mariadb_remote_DBNAME')
 
     
     conn = mariadb.connect(host=HOST, database=DBNAME,  user=USER, password=PASSWORD) 
