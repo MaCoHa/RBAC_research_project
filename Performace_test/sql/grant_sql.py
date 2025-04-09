@@ -28,7 +28,7 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
             f"FLUSH PRIVILEGES;"]
         if tree_type == "Balanced_tree":
-            lst.append(f"GRANT Role{current} To Role{role}")
+            lst.append(f"GRANT Role{role} To Role{current}")
         return lst
 
 
