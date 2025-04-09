@@ -17,7 +17,7 @@ table = "foo"
 #tree_sizes = [1000,10_000,100_000]
 
 ### Test sizes 
-tree_sizes = [1,10,100]
+tree_sizes = [1,10]
 
 def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
