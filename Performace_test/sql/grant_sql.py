@@ -27,7 +27,9 @@ def generate_grant_table_querie(db,table,role):
             f"GRANT all PRIVILEGES on mariadb to Role{role};",
             f"GRANT all PRIVILEGES on mariadb.{table} to Role{role};",
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
-            f"FLUSH PRIVILEGES;"
+            f"FLUSH PRIVILEGES;",
+            f"GRANT Role2 To Role10",
+
          ]
 
 
