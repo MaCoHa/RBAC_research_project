@@ -17,7 +17,7 @@ table = "foo"
 #tree_sizes = [1000,10_000,100_000]
 
 ### Test sizes 
-tree_sizes = [10]
+tree_sizes = [1,10,100]
 
 def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
@@ -78,6 +78,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
 
         
         try:
+            c = 0
             #print(f'Create tree {tree_type} on db : {database}') 
             if tree_type == "Wide_tree":
                 
@@ -100,7 +101,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
             elif tree_type == "Balanced_tree":
                
-                control_val = create.balanced_tree(cur,database,tree_size,time_limit_minutes)
+                control_val,c = create.balanced_tree(cur,database,tree_size,time_limit_minutes)
 
                 if control_val != 0:
                     print(f'Time limit exceded terminating tests for {tree_type} on db : {database}')
@@ -115,7 +116,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
                 
 
-            for query in sql.generate_grant_table_querie(database,table,tree_size):
+            for query in sql.generate_grant_table_querie(database,table,tree_size,tree_type,c):
                 start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                 #print(query)
                 cur.execute(query)
@@ -254,7 +255,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
             
 
             # clean tree
-            #util.remove_roles(database,cur,tree_size+1)
+            util.remove_roles(database,cur,tree_size+1)
             #close con
         finally:
             cur.close()

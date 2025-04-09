@@ -78,7 +78,7 @@ def balanced_tree(cur,db,tree_size,time_limit_minutes):
             elapsed_time = time.time() - start_time
             if elapsed_time > time_limit_seconds:
                 print("Time limit reached. Exiting loop.")
-                return front
-        return 0
+                return front, 0
+        return 0, current
     
     

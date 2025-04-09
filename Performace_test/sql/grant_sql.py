@@ -2,7 +2,7 @@
    
 
         
-def generate_grant_table_querie(db,table,role):
+def generate_grant_table_querie(db,table,role,tree_type,current):
     if db == "Snowflake":
         return [
             f"GRANT ALL PRIVILEGES ON DATABASE RBAC_EXPERIMENTS TO ROLE ROLE{role};",
@@ -21,16 +21,15 @@ def generate_grant_table_querie(db,table,role):
         ]
     else:
         # MariaDB
-        print(role)
-        return [
+        lst = [
             f"GRANT all PRIVILEGES on mariadb.* to Role{role};",
             f"GRANT all PRIVILEGES on mariadb to Role{role};",
             f"GRANT all PRIVILEGES on mariadb.{table} to Role{role};",
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
-            f"FLUSH PRIVILEGES;",
-            f"GRANT Role10 To Role2;",
-
-         ]
+            f"FLUSH PRIVILEGES;"]
+        if tree_type == "Balanced_tree":
+            lst.append(f"GRANT Role{current} To Role{role}")
+        return lst
 
 
    
