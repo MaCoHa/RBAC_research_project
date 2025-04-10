@@ -77,11 +77,6 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
             cur = conn.cursor()
         
 
-        util.remove_roles(database,cur,10_000+1)
-        return
-        
-
-        
         try:
             c = 0
             #print(f'Create tree {tree_type} on db : {database}') 
