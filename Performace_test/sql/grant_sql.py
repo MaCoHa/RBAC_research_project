@@ -37,7 +37,15 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
                     "GRANT `Role3` TO `Role0`;"
                 ])
             elif role == 10_000:
-                l = 2
+                lst.extend([
+                    "GRANT `Role10000` TO `Role2499`",
+                    "GRANT `Role2499` TO `Role624`",
+                    "GRANT `Role624` TO `Role155`",
+                    "GRANT `Role155` TO `Role38`",
+                    "GRANT `Role38` TO `Role9`",
+                    "GRANT `Role9` TO `Role2`",
+                    "GRANT `Role2` TO `Role0`"
+                ])
             elif role == 100_000:
                 l = 3
         return lst
