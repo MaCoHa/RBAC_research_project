@@ -24,7 +24,7 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
         lst = [
             f"GRANT all PRIVILEGES on mariadb.* to Role{role};",
             f"GRANT all PRIVILEGES on mariadb to Role{role};",
-            f"GRANT all PRIVILEGES on mariadb.{table} to Role{role};",
+            f"GRANT SELECT on mariadb.{table} to Role{role};",
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
             f"FLUSH PRIVILEGES;"]
         if tree_type == "Balanced_tree":
