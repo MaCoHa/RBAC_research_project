@@ -17,7 +17,7 @@ table = "foo"
 #tree_sizes = [1000,10_000,100_000]
 
 ### Test sizes 
-tree_sizes = [1,10,1000]
+tree_sizes = [1000]
 
 def main(file_name,database,tree_type,time_limit_minutes,repetitions):
     
@@ -76,8 +76,6 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 sys.exit(1)
             cur = conn.cursor()
         
-        util.remove_roles(database,cur,1000+1)
-        return
 
         
         try:
