@@ -28,7 +28,18 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
             f"FLUSH PRIVILEGES;"]
         if tree_type == "Balanced_tree":
-            lst.append(f"GRANT Role{role} To Role{current}")
+            if role == 1000:
+                lst.extend([
+                    "GRANT `Role1000` TO `Role249`;",
+                    "GRANT `Role249` TO `Role62`;",
+                    "GRANT `Role62` TO `Role15`;",
+                    "GRANT `Role15` TO `Role3`;",
+                    "GRANT `Role3` TO `Role0`;"
+                ])
+            elif role == 10_000:
+                l = 2
+            elif role == 100_000:
+                l = 3
         return lst
 
 
