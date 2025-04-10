@@ -7,7 +7,7 @@ import setup as setup
 # starndard are rep: 2. time: 15
 select_repetitions = 5
 repetitions = 2
-time_limit_minutes = 15
+time_limit_minutes = 20
 
 
 
