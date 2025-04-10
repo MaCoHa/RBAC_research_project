@@ -75,6 +75,9 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
             cur = conn.cursor()
+        
+        util.remove_roles(database,cur,1000+1)
+        return
 
         
         try:

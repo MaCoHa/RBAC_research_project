@@ -62,7 +62,7 @@ def balanced_tree(cur,db,tree_size,time_limit_minutes):
 
         time_limit_seconds = time_limit_minutes * 60
         start_time = time.time()
-
+        last_current = 0
         while True:
             if tree_size < front:
                 print(f"reached role {front}. Exiting loop.")
@@ -70,6 +70,7 @@ def balanced_tree(cur,db,tree_size,time_limit_minutes):
             
             for query in balanced.generate_role_queries(db,f"Role{current}",f"Role{(front)}"):
                 cur.execute(query)
+            last_current = current
                 
             if (front % 4) == 0:
                     current += 1
@@ -79,6 +80,6 @@ def balanced_tree(cur,db,tree_size,time_limit_minutes):
             if elapsed_time > time_limit_seconds:
                 print("Time limit reached. Exiting loop.")
                 return front, 0
-        return 0, current
+        return 0, last_current
     
     
