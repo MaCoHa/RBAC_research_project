@@ -33,7 +33,7 @@ def append_to_log(file_name, data):
 
 def grant_table(db,cur,role_num,table_name):
       for query in grant.generate_grant_table_querie(db,table_name,role_num):
-        if db == "Snowflake":
+        if db == "Snowflake" or db == "Snowflake_EC2":
             cur.execute(query)
         elif db == "PostgreSql" or db == "PostgreSql_EC2":
             cur.execute(query)

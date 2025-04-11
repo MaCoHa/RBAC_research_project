@@ -2,7 +2,7 @@
 
         
 def generate_setup_queries(db):
-    if db == "Snowflake":
+    if db == "Snowflake" or db == "Snowflake_EC2":
         return [
            
         ]

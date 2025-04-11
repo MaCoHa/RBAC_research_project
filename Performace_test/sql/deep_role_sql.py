@@ -2,7 +2,7 @@
 
         
 def generate_role_queries(db,role1,role2):
-    if db == "Snowflake":
+    if db == "Snowflake" or db == "Snowflake_EC2":
         return [
             f"CREATE OR REPLACE ROLE {role1};",
             f"GRANT ROLE {role1} TO ROLE {role2};"

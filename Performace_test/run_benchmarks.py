@@ -30,13 +30,13 @@ experiments = [
 
 
 
-    #("Snowflake_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_Snowflake_EC2_stats", db="Snowflake")),
-    #("Snowflake_EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_Snowflake_EC2_stats", db="Snowflake")),
-    #("Snowflake_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_Snowflake_EC2_stats", db="Snowflake")),
+    ("Snowflake_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_Snowflake_EC2_stats", db="Snowflake_EC2")),
+    ("Snowflake_EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_Snowflake_EC2_stats", db="Snowflake_EC2")),
+    ("Snowflake_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_Snowflake_EC2_stats", db="Snowflake_EC2")),
     
-    #("Snowflake_EC2 wide_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Wide_tree", database="Snowflake", tree_type="Wide_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
-    #("Snowflake_EC2 deep_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Deep_tree", database="Snowflake", tree_type="Deep_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
-    #("Snowflake_EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Balanced_tree", database="Snowflake", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
+    ("Snowflake_EC2 wide_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Wide_tree", database="Snowflake_EC2", tree_type="Wide_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
+    ("Snowflake_EC2 deep_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Deep_tree", database="Snowflake_EC2", tree_type="Deep_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
+    ("Snowflake_EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Balanced_tree", database="Snowflake_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
     #("PostgreSQL wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_postgresql_stats", db="PostgreSql")),
@@ -67,15 +67,15 @@ experiments = [
     #("PostgreSQL EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_postgresql_ec2_Balanced_tree", database="PostgreSql_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
-    ("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
+    #("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
 
     #("MariaDB_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
     #("MariaDB_EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
-    ("MariaDB_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
+    #("MariaDB_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
    
     #("MariaDB_EC2 wide_tree Select Test", lambda: select.main(file_name="benchmark_select_star_MariaDB_EC2_Wide_tree", database="MariaDB_EC2", tree_type="Wide_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
     #("MariaDB_EC2 deep_tree Select Test", lambda: select.main(file_name="benchmark_select_star_MariaDB_EC2_Deep_tree", database="MariaDB_EC2", tree_type="Deep_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
-    ("MariaDB_EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_MariaDB_EC2_Balanced_tree", database="MariaDB_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
+    #("MariaDB_EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_MariaDB_EC2_Balanced_tree", database="MariaDB_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
 ]

@@ -3,7 +3,7 @@
 
         
 def generate_grant_table_querie(db,table,role,tree_type,current):
-    if db == "Snowflake":
+    if db == "Snowflake" or db == "Snowflake_EC2":
         return [
             f"GRANT ALL PRIVILEGES ON DATABASE RBAC_EXPERIMENTS TO ROLE ROLE{role};",
             f"GRANT ALL PRIVILEGES ON SCHEMA RBAC_EXPERIMENTS.public TO ROLE ROLE{role};",
@@ -27,7 +27,7 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
             f"GRANT SELECT on mariadb.{table} to Role{role};",
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
             f"FLUSH PRIVILEGES;"]
-        if tree_type == "Balanced_tree":
+        if tree_type == "Balanced_tree" and db == "MariaDB_EC2":
             if role == 1000:
                 lst.extend([
                     "GRANT `Role1000` TO `Role249`;",

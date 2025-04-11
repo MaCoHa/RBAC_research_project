@@ -10,7 +10,7 @@ import sys
 
 def main(db):
     
-    if db == "Snowflake":
+    if db == "Snowflake" or db == "Snowflake_EC2":
         #print('Connecting to the Snowflake database...') 
         
         connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")

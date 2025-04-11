@@ -27,7 +27,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
 
     for index,tree_size in enumerate(tree_sizes):
         
-        if database == "Snowflake":
+        if database == "Snowflake" or database == "Snowflake_EC2":
             #print('Connecting to the Snowflake database...') 
             
             connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
@@ -186,7 +186,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                         
                     
                 
-                if database == "Snowflake":
+                if database == "Snowflake" or database == "Snowflake_EC2":
                     cur.execute("USE ROLE TRAINING_ROLE;")
                 elif database == "PostgreSql" or database == "PostgreSql_EC2":
                     cur.execute("SET ROLE postgres;")
@@ -196,7 +196,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 # 
                 #**************************************************************** 
                 
-                if database == "Snowflake":
+                if database == "Snowflake" or database == "Snowflake_EC2":
                     query = "SHOW ROLES;"
                 elif database == "PostgreSql" or database == "PostgreSql_EC2":
                     query = "SELECT * FROM pg_roles;"
@@ -251,7 +251,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA information_schema FROM Role{tree_size};")
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM Role{tree_size};")
                 cur.execute(f"REVOKE  ALL PRIVILEGES  ON  {table} FROM  Role{tree_size};")
-            elif database == "Snowflake":
+            elif database == "Snowflake" or database == "Snowflake_EC2":
                 cur.execute(f"USE ROLE TRAINING_ROLE;")
             
 
