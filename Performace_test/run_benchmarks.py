@@ -40,9 +40,9 @@ experiments = [
     #("Snowflake_EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_Snowflake_EC2_Balanced_tree", database="Snowflake_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
-    #("PostgreSQL wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_postgresql_stats", db="PostgreSql")),
-    #("PostgreSQL deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_postgresql_stats", db="PostgreSql")),
-    #("PostgreSQL balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_postgresql_stats", db="PostgreSql")),
+    ("PostgreSQL wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_postgresql_stats_error", db="PostgreSql")),
+    #("PostgreSQL deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_postgresql_stats_error", db="PostgreSql")),
+    #("PostgreSQL balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_postgresql_stats_error", db="PostgreSql")),
    
     #("PostgreSQL wide_tree Select Test", lambda: select.main(file_name="benchmark_select_star_postgresql_Wide_tree", database="PostgreSql", tree_type="Wide_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
     #("PostgreSQL deep_tree Select Test", lambda: select.main(file_name="benchmark_select_star_postgresql_Deep_tree", database="PostgreSql", tree_type="Deep_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),

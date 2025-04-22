@@ -22,7 +22,7 @@ def create_log_initial(file_name):
     os.makedirs('./benchmark', exist_ok=True)
     with open(f'./benchmark/{file_name}.csv', 'w',newline='') as file:
             writer = csv.writer(file, delimiter=';')
-            writer.writerow(("test_id","query", "database", "tree_type", "repetition","role_number","start_time","endtime"))
+            writer.writerow(("test_id","query", "database", "tree_type", "repetition","role_number","start_time","endtime","success","error_msg"))
     
     
 def append_to_log(file_name, data):
