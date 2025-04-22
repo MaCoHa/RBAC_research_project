@@ -101,7 +101,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
 
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     success = True
-                    error_message = ""
+                    error_message = "non"
                     try:
                         cur.execute(query)
                     except Exception as e:
