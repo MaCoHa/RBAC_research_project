@@ -90,13 +90,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                 
                 for query in sql.generate_role_queries(db,f"Role{role_num}"):
                     start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                    success = True
-                    error_message = "non"
-                    try:
-                        cur.execute(query)
-                    except Exception as e:
-                        success = False
-                        error_message = str(e)
+                    cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                     util.append_to_log(file_name,
                             [test_id,
@@ -106,9 +100,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             i,
                             role_num,
                             (start_query_time),
-                            (end_query_time),
-                            "OK" if success else "FAIL",
-                            error_message])
+                            (end_query_time)])
                     
                 
                 
