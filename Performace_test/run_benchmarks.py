@@ -7,7 +7,7 @@ import setup as setup
 #import benchmark.create_processed.plot as plot
 # starndard are rep: 2. time: 15
 select_repetitions = 5
-repetitions = 2
+repetitions = 1
 time_limit_minutes = 15
 
 
