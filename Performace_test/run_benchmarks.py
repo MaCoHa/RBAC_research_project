@@ -7,7 +7,7 @@ import setup as setup
 #import benchmark.create_processed.plot as plot
 # starndard are rep: 2. time: 15
 select_repetitions = 5
-repetitions = 2
+repetitions = 1
 time_limit_minutes = 15
 
 
@@ -57,9 +57,9 @@ experiments = [
     #("MariaDB balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_MariaDB_Balanced_tree", database="MariaDB", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
-    ("PostgreSQL EC2 Setup the database", lambda: setup.main(db="PostgreSql_EC2")),
+    #("PostgreSQL EC2 Setup the database", lambda: setup.main(db="PostgreSql_EC2")),
 
-    ("PostgreSQL EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_postgresql_ec2_stats", db="PostgreSql_EC2")),
+    #("PostgreSQL EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_postgresql_ec2_stats", db="PostgreSql_EC2")),
     #("PostgreSQL EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_postgresql_ec2_Big_stats", db="PostgreSql_EC2")),
     #("PostgreSQL EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_postgresql_ec2_Big_stats", db="PostgreSql_EC2")),
    
@@ -68,9 +68,9 @@ experiments = [
     #("PostgreSQL EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_postgresql_ec2_Big_Balanced_tree", database="PostgreSql_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
-    #("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
+    ("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
 
-    #("MariaDB_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
+    ("MariaDB_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
     #("MariaDB_EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
     #("MariaDB_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
    
