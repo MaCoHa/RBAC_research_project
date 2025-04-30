@@ -62,7 +62,8 @@ def main(repetitions,time_limit_minutes,file_name,db):
             sys.exit(1)
         cur = conn.cursor()
 
-
+    #util.remove_roles(db,cur,role_num)
+    #return
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
     
@@ -108,7 +109,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
                 
             # run clean up roles           
             #util.remove_roles(db,cur,role_num)
-            #util.remove_roles_log(db,cur,role_num,file_name,test_id,i,"Wide_tree")
+            util.remove_roles_log(db,cur,role_num,file_name,test_id,i,"Wide_tree")
     finally:
         conn.close()
         cur.close()
