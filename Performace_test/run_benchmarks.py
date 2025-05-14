@@ -1,3 +1,4 @@
+from benchmark.create_processed import plot
 import create_wide_role_tree as wide
 import create_deep_role_tree as deep
 import create_balanced_role_tree as balanced
@@ -68,9 +69,9 @@ experiments = [
     #("PostgreSQL EC2 balanced_tree Select Test", lambda: select.main(file_name="benchmark_select_star_postgresql_ec2_Big_Balanced_tree", database="PostgreSql_EC2", tree_type="Balanced_tree", time_limit_minutes=time_limit_minutes,repetitions=select_repetitions)),
 
 
-    ("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
+    #("MariaDB_EC2 EC2 Setup the database", lambda: setup.main(db="MariaDB_EC2")),
 
-    ("MariaDB_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
+    #("MariaDB_EC2 wide_tree Create Test", lambda: wide.main(repetitions, time_limit_minutes, file_name="benchmark_wide_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
     #("MariaDB_EC2 deep_tree Create Test", lambda: deep.main(repetitions, time_limit_minutes, file_name="benchmark_deep_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
     #("MariaDB_EC2 balanced_tree Create Test", lambda: balanced.main(repetitions, time_limit_minutes, file_name="benchmark_balanced_tree_MariaDB_EC2_stats", db="MariaDB_EC2")),
    
@@ -83,12 +84,19 @@ experiments = [
 
 
 
-    #("Create Snowflake data graphs", lambda: plot.plot_line_graph("Snowflake median grant and create Role over 15 min","Snowflake_grant_data.csv","Snowflake_grant_data")),
-    #("Create PostgreSql data graphs", lambda: plot.plot_line_graph("PostgreSql median grant and create Role over 15 min","PostgreSql_grant_data.csv","PostgreSql_grant_data")),
-    #("Create MariaDb data graphs", lambda: plot.plot_line_graph("MariaDb median grant and create Role over 15 min","MariaDb_grant_data.csv","MariaDb_grant_data")),
-    #("Create Snowflake_EC2 data graphs", lambda: plot.plot_line_graph("Snowflake_EC2 median grant and create Role over 15 min","Snowflake_EC2_grant_data.csv","Snowflake_EC2_grant_data")),
-    #("Create PostgreSql_EC2 data graphs", lambda: plot.plot_line_graph("PostgreSql_EC2 median grant and create Role over 15 min","PostgreSql_EC2_grant_data.csv","PostgreSql_EC2_grant_data")),
-    #("Create MariaDb_EC2 data graphs", lambda: plot.plot_line_graph("MariaDb_EC2 median grant and create Role over 15 min","MariaDb_EC2_grant_data.csv","MariaDb_EC2_grant_data"))
+    ("Create Snowflake data graphs", lambda: plot.old_plot_line_graph("Snowflake median grant and create Role over 15 min","Snowflake_grant_data.csv","Snowflake_grant_data")),
+    ("Create PostgreSql data graphs", lambda: plot.old_plot_line_graph("PostgreSql median grant and create Role over 15 min","PostgreSql_grant_data.csv","PostgreSql_grant_data")),
+    ("Create MariaDb data graphs", lambda: plot.plot_line_graph("MariaDb median grant and create Role over 15 min","MariaDb_grant_data.csv","MariaDb_grant_data")),
+    ("Create Snowflake_EC2 data graphs", lambda: plot.old_plot_line_graph("Snowflake_EC2 median grant and create Role over 15 min","Snowflake_EC2_grant_data.csv","Snowflake_EC2_grant_data")),
+    ("Create PostgreSql_EC2 data graphs", lambda: plot.plot_line_graph("PostgreSql_EC2 median grant and create Role over 15 min","PostgreSql_EC2_grant_data.csv","PostgreSql_EC2_grant_data")),
+    ("Create MariaDb_EC2 data graphs", lambda: plot.plot_line_graph("MariaDb_EC2 median grant and create Role over 15 min","MariaDb_EC2_grant_data.csv","MariaDb_EC2_grant_data")),
+    ("Create PostgreSql_EC2_big data graphs", lambda: plot.plot_line_graph("PostgreSql_EC2 median grant and create Role over 15 min","PostgreSql_EC2_5d_large_grant_data.csv","PostgreSql_EC2_5d_large_grant_data")),
+    
+    ("Create Local Iops data graphs", lambda: plot.plot_local_iops()),
+    ("Create Online Iops data graphs", lambda: plot.plot_online_iops()),
+    
+
+
     
 
 
