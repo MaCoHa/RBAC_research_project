@@ -1,6 +1,6 @@
-drop table experiment_sample;
+Drop TABLE experiment_unprocessed;
 
-CREATE or REPLACE TABLE experiment_sample (
+CREATE or REPLACE TABLE experiment_unprocessed (
     test_id INT,
     query STRING,
     database STRING,
@@ -9,11 +9,15 @@ CREATE or REPLACE TABLE experiment_sample (
     role_number INT,
     start_time FLOAT,
     end_time FLOAT);
+    
+COPY INTO experiment_unprocessed (test_id, query,database,tree_type,repetition,role_number,start_time, end_time)  -- Specify the exact column names in the table
+FROM @BlueJayStage
+FILE_FORMAT = (
+TYPE = 'CSV' 
+FIELD_DELIMITER = ';'
+SKIP_HEADER = 1);
 
 
-
-
-SELECT * FROM EXPERIMENT_SAMPLE;
 
 
 drop table if exists data_rep1;
@@ -64,7 +68,7 @@ SELECT
     row1.start_time,
     row1.end_time,
 FROM 
-    experiment_sample AS row1
+    experiment_unprocessed AS row1
 WHERE
     row1.repetition = 0;
 
@@ -78,7 +82,7 @@ SELECT
     row1.start_time,
     row1.end_time,
 FROM 
-    experiment_sample AS row1
+    experiment_unprocessed AS row1
 WHERE
     row1.repetition = 1;
 
@@ -108,4 +112,5 @@ ON
     AND row1.query = row2.query
     AND row1.role_number = row2.role_number;
 
-    
+
+
