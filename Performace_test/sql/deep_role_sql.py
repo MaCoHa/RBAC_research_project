@@ -1,6 +1,7 @@
 
 
-        
+# Function to generate SQL queries for creating and 
+# granting roles on a Deep hierarchy
 def generate_role_queries(db,role1,role2):
     if db == "Snowflake" or db == "Snowflake_EC2":
         return [

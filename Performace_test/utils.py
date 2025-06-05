@@ -39,16 +39,15 @@ def grant_table(db,cur,role_num,table_name):
             cur.execute(query)
         elif db == "MariaDB" or db == "MariaDB_EC2":
             cur.execute(query)  
-        
-def remove_roles(db,cur,num_of_roles):
-    # drops roles from 1 to num_of_roles
-    #print("Deleting roles")
-    #print(f"role num {num_of_roles}" )
-    #print(f"database {db}" )
 
+# remove roles cleans up by deleting the roles created during the test.
+# It is used to ensure that the database is in a clean state before the next test run.
+def remove_roles(db,cur,num_of_roles):
     for query in cleanup.generate_drop_role_queries(num_of_roles):
             cur.execute(query)
 
+# remove_roles_log cleans up by deleting the roles created during the test.
+# It also logs the time taken for each query execution.
 def remove_roles_log(db,cur,num_of_roles,file_name,test_id,rep,tree_type):
 
     for query in cleanup.generate_drop_role_queries(num_of_roles):
@@ -65,7 +64,8 @@ def remove_roles_log(db,cur,num_of_roles,file_name,test_id,rep,tree_type):
                 (start_query_time),
                 (end_query_time)])
 
-
+# For the Select experiments if a experiments ran for more that 15 minutes
+# it is necessary to add some fill logs to ensure that the log file is not empty.
 def add_fill_logs(file_name,db,test_id,index,tree_type,tree_sizes):
     queries = [
         "SELECT * FROM foo",
@@ -87,24 +87,10 @@ def add_fill_logs(file_name,db,test_id,index,tree_type,tree_sizes):
             
      
 
-def get_query_stats(cur, query_id):
-    query_id_str = f"'{query_id}'"
-
-    stats_query = f"""
-    SELECT query_id, schema_name, warehouse_size, total_elapsed_time/1000 AS time_elapsed_in_seconds, total_elapsed_time AS total_elapsed_time_milli
-    FROM
-        table(information_schema.query_history())
-    WHERE user_name = 'CAT' and execution_status = 'SUCCESS' and query_id = {query_id_str}
-    ORDER BY start_time desc;
-    """
-    
-    cur.execute(stats_query)
-    return cur.fetchall()
 
 
 
-from configparser import ConfigParser 
-  
+# Connecting to PostgreSQL hosted on a local machine / localhost  
 def postgres_config(): 
     load_dotenv()
     PORT= os.getenv('postgres_port')
@@ -115,6 +101,7 @@ def postgres_config():
     conn = psycopg2.connect(port=PORT,host="localhost", database=DBNAME, user=USER, password=PASSWORD) 
     return conn
   
+# Connecting to PostgreSQL hosted on a remote machine / RDS instance from an EC2 instance
 def postgres_config_remote(): 
     load_dotenv()
 
@@ -122,10 +109,10 @@ def postgres_config_remote():
     USER= os.getenv('postgres_remote_USER')
     PASSWORD= os.getenv('postgres_remote_PASSWORD')
     DBNAME= os.getenv('postgres_remote_DBNAME')
-    # get section, default to postgresql 
     conn = psycopg2.connect(host=HOST, database=DBNAME, user=USER, password=PASSWORD) 
     return conn
 
+# Connecting to MariaDB connectionuser hosted on a local machine / localhost
 def mariadb_connectionuser_config():
     load_dotenv()
     PORT= os.getenv('mariadb_port')
@@ -137,9 +124,8 @@ def mariadb_connectionuser_config():
     conn = mariadb.connect(host="localhost", database=DBNAME,  user=USER, password=PASSWORD) 
     return conn
 
+# Connecting to MariaDB root hosted on a local machine / localhost
 def mariadb_config():
-
-
     load_dotenv()
     PORT= os.getenv('mariadb_port')
     USER= os.getenv('mariadb_user')
@@ -150,22 +136,18 @@ def mariadb_config():
     conn = mariadb.connect(host="localhost",database=DBNAME, user=USER, password=PASSWORD) 
     return conn
     
-
+# Connecting to MariaDB connectionuser hosted on a remote machine / RDS instance from an EC2 instance
 def mariadb_connectionuser_config_remote():
     load_dotenv()
     HOST=os.getenv('mariadb_remote_HOST')
     USER= os.getenv('mariadb_remote_1_USER')
     PASSWORD= os.getenv('mariadb_remote_1_PASSWORD')
-    #DBNAME= os.getenv('mariadb_remote_DBNAME')
 
     
-    #conn = mariadb.connect(host=HOST, database=DBNAME,  user=USER, password=PASSWORD) 
     conn = mariadb.connect(host=HOST,  user=USER, password=PASSWORD) 
     return conn
-
+# Connecting to MariaDB root hosted on a remote machine / RDS instance from an EC2 instance
 def mariadb_config_remote():
-
-
     load_dotenv()
     HOST=os.getenv('mariadb_remote_HOST')
     USER= os.getenv('mariadb_remote_USER')
@@ -176,23 +158,20 @@ def mariadb_config_remote():
     
     return conn
 
-
-def create_connection(database_name, schema_name):
+# create_connection establishes a connection to the Snowflake database using environment variables
+def create_connection():
     load_dotenv()
 
-    password = os.getenv('Snowflake_pass')
-
     snowflake_config = {
-        "user": "BLUEJAY",
-        "password": password,
-        "account": "sfedu02-HZB12071",
-        "database": database_name,
-        "schema": schema_name,
+        "user": os.getenv('Snowflake_user'),
+        "password": os.getenv('Snowflake_pass'),
+        "account": os.getenv('Snowflake_account'),
+        "database": os.getenv('Snowflake_database_name'),
+        "schema": os.getenv('Snowflake_schema_name'),
         "session_parameters": {
             "USE_CACHED_RESULT": False
         }
     }
-
     return snowflake_config
 
 

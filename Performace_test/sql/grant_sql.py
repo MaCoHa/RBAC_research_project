@@ -1,8 +1,8 @@
 
    
 
-        
-def generate_grant_table_querie(db,table,role,tree_type,current):
+ # This script generates SQL queries to grant privileges to the last role in a hierarchy.       
+def generate_grant_table_querie(db,table,role,tree_type):
     if db == "Snowflake" or db == "Snowflake_EC2":
         return [
             f"GRANT ALL PRIVILEGES ON DATABASE RBAC_EXPERIMENTS TO ROLE ROLE{role};",
@@ -27,6 +27,11 @@ def generate_grant_table_querie(db,table,role,tree_type,current):
             f"GRANT SELECT on mariadb.{table} to Role{role};",
             f"SET DEFAULT ROLE Role0 FOR 'connection'@'%';",
             f"FLUSH PRIVILEGES;"]
+        
+        # For MariaDB, cloud experiment Balanced_tree only a denide access error is thrown
+        # Suspect it to the the cache not being invalidated properly
+        # This is a workaround to ensure the cache is updated and it knows the privliges
+        # note that this updates it all and not just for these roles
         if tree_type == "Balanced_tree" and db == "MariaDB_EC2":
             if role == 1000:
                 lst.extend([

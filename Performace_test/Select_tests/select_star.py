@@ -2,6 +2,7 @@
 import datetime
 import os
 import time
+from dotenv import load_dotenv
 import snowflake.connector
 import sql.grant_sql as sql
 import utils as util
@@ -12,14 +13,9 @@ import Select_tests.create_trees as create
 
 
 
-table = "foo"
-### True sizes
-tree_sizes = [1000,10_000,100_000]
+# This script performs the select experiments on the chosen database and tree hierarchy type.
 
-### Test sizes 
-#tree_sizes = [100_000]
-
-def main(file_name,database,tree_type,time_limit_minutes,repetitions):
+def main(file_name,database,tree_type,time_limit_minutes,repetitions,tree_sizes,table):
     
     test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     
@@ -27,60 +23,50 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
 
     for index,tree_size in enumerate(tree_sizes):
         
+        
+        load_dotenv()
+        # Set up the database connection based on the provided db parameter
+        # Connecting to Snowflake via the local or cloud driver does not change
         if database == "Snowflake" or database == "Snowflake_EC2":
-            #print('Connecting to the Snowflake database...') 
-            
-            connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
+            connection_config = util.create_connection()
             conn = snowflake.connector.connect(**connection_config)
             cur = conn.cursor()
-            util.use_warehouse(cur, "ANIMAL_TASK_WH")
+            util.use_warehouse(cur, os.getenv('Snowflake_warehouse'))
+        # Connecting to PostgreSQL local experiment
         elif database == "PostgreSql":
-            #print('Connecting to the PostgreSQL database...') 
-            
-            # connect to the PostgreSQL server 
             conn = util.postgres_config()
-            # autocommit commits querys to the database imediatly instead of
-            #storing the transaction localy
             conn.autocommit = True
             cur = conn.cursor() 
+        # Connecting to PostgreSQL Cloud from a EC2 instance to a RDS instance
         elif database == "PostgreSql_EC2":
-            #print('Connecting to the PostgreSQL database...') 
             
-            # connect to the PostgreSQL server 
             conn = util.postgres_config_remote()
-            # autocommit commits querys to the database imediatly instead of
-            #storing the transaction localy
             conn.autocommit = True
             cur = conn.cursor() 
             
-
+        # Connecting to MariaDB local experiment
         elif database == "MariaDB":
-            # connect to the MariaDB server   
-            #print('Connecting to the MariaDB database...') 
             try:
-                # connect to the MariaDB server 
                 conn = util.mariadb_config() 
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
             cur = conn.cursor()
 
+        # Connecting to MariaDB Cloud from a EC2 instance to a RDS instance
         elif database == "MariaDB_EC2":
-            # connect to the MariaDB server   
-            #print('Connecting to the MariaDB database...') 
             try:
-                # connect to the MariaDB server 
                 conn = util.mariadb_config_remote() 
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
             cur = conn.cursor()
-        
-        
+
+            
 
         try:
-            c = 0
-            #print(f'Create tree {tree_type} on db : {database}') 
+            # create the role hierarchiy of tree_size if it takes more than time_limit_minutes the creating is
+            # terminated and attempted test is logged
             if tree_type == "Wide_tree":
                 
                 control_val = create.wide_tree(cur,database,tree_size,time_limit_minutes)
@@ -102,7 +88,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
             elif tree_type == "Balanced_tree":
                
-                control_val,c = create.balanced_tree(cur,database,tree_size,time_limit_minutes)
+                control_val = create.balanced_tree(cur,database,tree_size,time_limit_minutes)
 
                 if control_val != 0:
                     print(f'Time limit exceded terminating tests for {tree_type} on db : {database}')
@@ -116,10 +102,10 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 
                 
                 
-
-            for query in sql.generate_grant_table_querie(database,table,tree_size,tree_type,c):
+            # Grants Usage and selct on the table to last created roles
+            # Addtionally for Snowflake and PostgreSQL the role is set to Role0
+            for query in sql.generate_grant_table_querie(database,table,tree_size,tree_type):
                 start_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
-                #print(query)
                 cur.execute(query)
                 end_query_time = time.perf_counter_ns() / 1_000_000 # convert from ns to ms
                 util.append_to_log(file_name,
@@ -153,9 +139,12 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                             (start_query_time),
                             (end_query_time)])
                 else:
-                    #print('Connecting to the MariaDB ConnectionUser') 
                     try:
-                        # connect to the MariaDB server 
+                        # For MariaDB the query is executed with a different user
+                        # in MariaDB the Root user have read / write access to all even when using the 
+                        # Set Role command
+                        # so the query is executed with a user that has only read access 
+                        # to the table throug the role hierarchy
                         conn2 = util.mariadb_connectionuser_config_remote() 
                     
                         cur2 = conn2.cursor()
@@ -190,12 +179,14 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                     cur.execute("USE ROLE TRAINING_ROLE;")
                 elif database == "PostgreSql" or database == "PostgreSql_EC2":
                     cur.execute("SET ROLE postgres;")
+
                 #****************************************************************
                 #
                 # show roles
                 # 
                 #**************************************************************** 
                 
+                # Each database has its own query to show roles
                 if database == "Snowflake" or database == "Snowflake_EC2":
                     query = "SHOW ROLES;"
                 elif database == "PostgreSql" or database == "PostgreSql_EC2":
@@ -246,7 +237,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                             (end_query_time)])
                 
             
-            # remove PRIVILEGES from role so i can be deletede
+            # Remove PRIVILEGES from role so Roles can be deletede
             if database == "PostgreSql" or database == "PostgreSql_EC2":
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA information_schema FROM Role{tree_size};")
                 cur.execute(f"REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM Role{tree_size};")
@@ -255,9 +246,7 @@ def main(file_name,database,tree_type,time_limit_minutes,repetitions):
                 cur.execute(f"USE ROLE TRAINING_ROLE;")
             
 
-            # clean tree
             util.remove_roles(database,cur,tree_size+1)
-            #close con
         finally:
             cur.close()
             conn.close()

@@ -4,6 +4,7 @@ import datetime
 import os
 import sys
 import time
+from dotenv import load_dotenv
 import mariadb
 import snowflake.connector
 import sql.balanced_role_sql as sql
@@ -15,49 +16,39 @@ import psycopg2
 
 def main(repetitions,time_limit_minutes,file_name,db):
     
+    
+    load_dotenv()
+    # Set up the database connection based on the provided db parameter
+    # Connecting to Snowflake via the local or cloud driver does not change
     if db == "Snowflake" or db == "Snowflake_EC2":
-        #print('Connecting to the Snowflake database...') 
-        
-        connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
+        connection_config = util.create_connection()
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
-        util.use_warehouse(cur, "ANIMAL_TASK_WH")
+        util.use_warehouse(cur, os.getenv('Snowflake_warehouse'))
+    # Connecting to PostgreSQL local experiment
     elif db == "PostgreSql":
-        #print('Connecting to the PostgreSQL database...') 
-        
-        # connect to the PostgreSQL server 
         conn = util.postgres_config()
-        # autocommit commits querys to the database imediatly instead of
-        #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
+    # Connecting to PostgreSQL Cloud from a EC2 instance to a RDS instance
     elif db == "PostgreSql_EC2":
-        #print('Connecting to the PostgreSQL database...') 
         
-        # connect to the PostgreSQL server 
         conn = util.postgres_config_remote()
-        # autocommit commits querys to the database imediatly instead of
-        #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
         
-
+    # Connecting to MariaDB local experiment
     elif db == "MariaDB":
-        # connect to the MariaDB server   
-        #print('Connecting to the MariaDB database...') 
         try:
-            # connect to the MariaDB server 
             conn = util.mariadb_config() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor()
 
+    # Connecting to MariaDB Cloud from a EC2 instance to a RDS instance
     elif db == "MariaDB_EC2":
-        # connect to the MariaDB server   
-        #print('Connecting to the MariaDB database...') 
         try:
-            # connect to the MariaDB server 
             conn = util.mariadb_config_remote() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
@@ -73,10 +64,7 @@ def main(repetitions,time_limit_minutes,file_name,db):
     util.create_log_initial(file_name)
     
     try:
-        #print(f"Running balanced role tree on {db}")
         
-        # Run create roles
-        #print("Running Create Roles")
         for i in range(repetitions):
            
             start_time = time.time()
@@ -90,13 +78,14 @@ def main(repetitions,time_limit_minutes,file_name,db):
                     print("Time limit reached. Exiting loop.")
                     break
                             
-    
+                # Create roles in a balanced tree structure
+                # because the balanced ensures each role has four children the logic is expanded
+                # front is the current role being created, and current is the parent role
                 for query in sql.generate_role_queries(db,f"Role{current}",f"Role{(front)}"):
                     start_query_time = time.perf_counter_ns() / 1_000_000  # convert from ns to ms
                     cur.execute(query)
                     end_query_time = time.perf_counter_ns() / 1_000_000  # convert from ns to ms
 
-                    #HERE — Now with verification and logging of success/failure
                     util.append_to_log(file_name,
                         [test_id,
                             query.replace(";", ""),
@@ -108,17 +97,11 @@ def main(repetitions,time_limit_minutes,file_name,db):
                             end_query_time,
                             ])
 
-                                
-        
-            
-        
-                
                 if (front % 4) == 0:
                     current += 1
                 front += 1
                
                 
-            # run clean up roles  
             #util.remove_roles(db,cur,front)
             util.remove_roles_log(db,cur,front,file_name,test_id,i,"balanced_tree")
 

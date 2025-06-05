@@ -9,73 +9,57 @@ import utils as util
 import psycopg2 
 import mariadb
 import sys
+from dotenv import load_dotenv
+
 
 
 def main(repetitions,time_limit_minutes,file_name,db):
     
+    load_dotenv()
+    # Set up the database connection based on the provided db parameter
+    # Connecting to Snowflake via the local or cloud driver does not change
     if db == "Snowflake" or db == "Snowflake_EC2":
-        #print('Connecting to the Snowflake database...') 
-        
-        connection_config = util.create_connection("RBAC_EXPERIMENTS", "ACCOUNTADMIN")
+        connection_config = util.create_connection()
         conn = snowflake.connector.connect(**connection_config)
         cur = conn.cursor()
-        util.use_warehouse(cur, "ANIMAL_TASK_WH")
+        util.use_warehouse(cur, os.getenv('Snowflake_warehouse'))
+    # Connecting to PostgreSQL local experiment
     elif db == "PostgreSql":
-        #print('Connecting to the PostgreSQL database...') 
-        
-        # connect to the PostgreSQL server 
         conn = util.postgres_config()
-        # autocommit commits querys to the database imediatly instead of
-        #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
+    # Connecting to PostgreSQL Cloud from a EC2 instance to a RDS instance
     elif db == "PostgreSql_EC2":
-        #print('Connecting to the PostgreSQL database...') 
         
-        # connect to the PostgreSQL server 
         conn = util.postgres_config_remote()
-        # autocommit commits querys to the database imediatly instead of
-        #storing the transaction localy
         conn.autocommit = True
         cur = conn.cursor() 
         
-
+    # Connecting to MariaDB local experiment
     elif db == "MariaDB":
-        # connect to the MariaDB server   
-        #print('Connecting to the MariaDB database...') 
         try:
-            # connect to the MariaDB server 
             conn = util.mariadb_config() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor()
 
+    # Connecting to MariaDB Cloud from a EC2 instance to a RDS instance
     elif db == "MariaDB_EC2":
-        # connect to the MariaDB server   
-        #print('Connecting to the MariaDB database...') 
         try:
-            # connect to the MariaDB server 
             conn = util.mariadb_config_remote() 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
         cur = conn.cursor()
 
-    #util.remove_roles(db,cur,role_num)
-    #return
-    test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
-    
+    test_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     time_limit_seconds = time_limit_minutes * 60
 
     util.create_log_initial(file_name)
     
-    try:
-        #print(f"Running wide role tree on {db}")
-        
-        # Run create roles
-        #print("Running Create Roles")
+    try:        
         for i in range(repetitions):
             
           
@@ -83,7 +67,6 @@ def main(repetitions,time_limit_minutes,file_name,db):
             start_time = time.time()
             role_num = 1
             while True:
-                # Check the elapsed time
                 elapsed_time = time.time() - start_time
                 if elapsed_time > time_limit_seconds:
                     print("Time limit reached. Exiting loop.")
@@ -107,9 +90,8 @@ def main(repetitions,time_limit_minutes,file_name,db):
                 
                 role_num += 1
                 
-            # run clean up roles           
             #util.remove_roles(db,cur,role_num)
-            #util.remove_roles_log(db,cur,role_num,file_name,test_id,i,"Wide_tree")
+            util.remove_roles_log(db,cur,role_num,file_name,test_id,i,"Wide_tree")
     finally:
         conn.close()
         cur.close()

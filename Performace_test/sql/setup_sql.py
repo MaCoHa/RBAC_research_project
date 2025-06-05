@@ -1,10 +1,10 @@
 
 
-        
+# this script is used to setup the database by creating the testing table and the role0
+# not that Snowflake does not do this because it was done before hand manually     
 def generate_setup_queries(db):
     if db == "Snowflake" or db == "Snowflake_EC2":
-        return [
-           
+        return [  
         ]
     elif db == "PostgreSql" or db == "PostgreSql_EC2":
         return [
